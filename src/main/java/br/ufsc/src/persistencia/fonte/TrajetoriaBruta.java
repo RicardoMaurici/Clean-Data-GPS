@@ -10,7 +10,7 @@ public class TrajetoriaBruta {
 	public String toString(){
 		
 		return "------- Trajetoria Bruta -------" 
-				+"\n Nœmero de linhas ig: "+nroLinhasIgnorar
+				+"\n Nï¿½mero de linhas ig: "+nroLinhasIgnorar
 				+"\n Separador: "+separador
 				+"\n Formato data: "+formatoData
 				+"\n Formato hora: "+formatoHorario

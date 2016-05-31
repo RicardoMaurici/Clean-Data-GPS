@@ -1,4 +1,4 @@
-package br.ufsc.src.controle;
+package br.ufsc.src.control;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import br.ufsc.src.control.entities.Point;
 import br.ufsc.src.persistencia.exception.TimeStampException;
 
 public class Utils {
@@ -19,8 +20,10 @@ public class Utils {
 			java.sql.Timestamp timeStampDate = new Timestamp(newdate);
 			dt = timeStampDate.toString();
 		}else if(dateFormat.indexOf('T') != -1){ //dateFormat with timezone
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
+			dateFormat = dateFormat.replace("T", "'T'");
+			DateFormat df = new SimpleDateFormat(dateFormat);
 			Date result;
+			date = date.replace("Z", "");
 			try {
 				result = df.parse(date);
 			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -30,8 +33,7 @@ public class Utils {
 				throw new TimeStampException(e.getMessage());
 			}
 
-		}else{ //dateFormat to dateFormat
-			if(timeFormat.length() > 0)
+		}else if(timeFormat.length() > 0){ //dateFormat to dateFormat
 				timeFormat = " "+timeFormat;
 			try {
 				DateFormat formatter;
@@ -83,7 +85,21 @@ public class Utils {
         return(sb.toString());
     }
 	
+	public static boolean isNumeric(String s) {  
+	    return s.matches("[-+]?\\d*\\.?\\d+");  
+	} 
 	
+	public static boolean isStringEmpty(String st){
+		return st.trim().equalsIgnoreCase("");
+	}
 	
-	
+	public static double euclidean(Point p1,Point p2){
+		double distX = Math.abs(p1.getX()-p2.getX());
+		double distXSquare = distX*distX;
+		
+		double distY = Math.abs(p1.getY()-p2.getY());
+		double distYSquare = distY*distY;
+		
+		return Math.sqrt(distXSquare+distYSquare);
+	}
 }

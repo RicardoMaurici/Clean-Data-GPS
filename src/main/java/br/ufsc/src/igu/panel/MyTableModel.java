@@ -1,4 +1,4 @@
-package br.ufsc.src.igu.painel;
+package br.ufsc.src.igu.panel;
 
 import javax.swing.table.DefaultTableModel;
 

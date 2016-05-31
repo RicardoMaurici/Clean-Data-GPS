@@ -1,4 +1,4 @@
-package br.ufsc.src.controle.exception;
+package br.ufsc.src.control.exception;
 
 public class TableExistsException extends Exception {
 	

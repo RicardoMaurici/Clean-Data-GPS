@@ -6,15 +6,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.postgresql.util.PSQLException;
 
-import br.ufsc.src.controle.Utils;
+import br.ufsc.src.control.Utils;
+import br.ufsc.src.control.dataclean.ConfigTrajBroke;
+import br.ufsc.src.control.entities.TPoint;
+import br.ufsc.src.control.entities.Trajectory;
 import br.ufsc.src.persistencia.conexao.DBConfig;
 import br.ufsc.src.persistencia.conexao.DBConnectionProvider;
 import br.ufsc.src.persistencia.exception.AddBatchException;
+import br.ufsc.src.persistencia.exception.AddColumnException;
 import br.ufsc.src.persistencia.exception.CreateSequenceException;
 import br.ufsc.src.persistencia.exception.CreateStatementException;
 import br.ufsc.src.persistencia.exception.CreateTableException;
@@ -22,6 +29,7 @@ import br.ufsc.src.persistencia.exception.DBConnectionException;
 import br.ufsc.src.persistencia.exception.ExecuteBatchException;
 import br.ufsc.src.persistencia.exception.FileNFoundException;
 import br.ufsc.src.persistencia.exception.GetSequenceException;
+import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 import br.ufsc.src.persistencia.exception.LoadDataFileException;
 import br.ufsc.src.persistencia.exception.SyntaxException;
 import br.ufsc.src.persistencia.exception.TimeStampException;
@@ -91,7 +99,7 @@ public class Persistencia implements InterfacePersistencia {
 			path = "";
 			if(tb.isTID())
 				createSequence(tb.getTabelaBanco(), "tid");
-			leiaCarregaDiretorios(dir.getUrl(), dir.getIgArquivo(), dir.getIgDiretorio(), dir.getExtensao(), dir.isIgExtensao(), tb);
+			leiaCarregaDiretorios(dir.getUrl(), dir.getIgFile(), dir.getIgFolder(), dir.getExtension(), dir.isIgExtension(), tb);
 			updateGeom(tb.getSridNovo(), tb.getSridAtual(), tb.getTabelaBanco());
 		} catch (IOException e) {
 			throw new LoadDataFileException(e.getMessage());
@@ -113,8 +121,11 @@ public class Persistencia implements InterfacePersistencia {
 				gi = true;
 			if(x.equalsIgnoreCase("tid"))
 				t = true;
-			
-			q1 += objects[0]+" "+objects[2]+""+(!objects[3].equals("") ? "("+objects[3]+")," : ",");
+			String auxTime = (String)objects[1];
+			if(x.equalsIgnoreCase("time") && auxTime.equalsIgnoreCase(""))
+				continue;
+			else
+				q1 += objects[0]+" "+objects[2]+""+(!objects[3].equals("") ? "("+objects[3]+")," : ",");
 		}
 		if(isGID && !gi)
 			q += gid;
@@ -196,7 +207,7 @@ public class Persistencia implements InterfacePersistencia {
 			else if(colName.equalsIgnoreCase("lon"))
 				posLon = colPos;
 		}
-		
+
 		String date = "";
 		String time = "";
 		String lon = "";
@@ -244,7 +255,7 @@ public class Persistencia implements InterfacePersistencia {
 				for (int i = 0; i <= tableData.length - 1; i++) {
 					String aux = (String)tableData[i][0];
 					if(!aux.equalsIgnoreCase("geom") && !aux.equalsIgnoreCase("timestamp")){
-						sql += (String)tableData[i][0]+",";
+						
 						String cs = (String)tableData[i][1];
 						int crs = -1;
 						try{
@@ -252,16 +263,23 @@ public class Persistencia implements InterfacePersistencia {
 						}catch(NumberFormatException e){
 							crs = -1;
 						}
+						if(aux.equalsIgnoreCase("time") && crs == -1)
+							continue;
+						else
+							sql += (String)tableData[i][0]+",";
 						if(crs != -1){
-							if(aux.equalsIgnoreCase("time"))
+							if(aux.equalsIgnoreCase("time")){
+									sql1 += "'"+linha[crs-1]+"',";
+							}else if(aux.equalsIgnoreCase("date")){
+								if(linha[crs-1].indexOf('T') != -1)
+									sql1 += "'"+linha[crs-1].split("T")[0]+"',";
+								else 
+									sql1 += "'"+linha[crs-1]+"',";
+							}else
 								sql1 += "'"+linha[crs-1]+"',";
-							else if(aux.equalsIgnoreCase("date"))
-								sql1 += "'"+linha[crs-1]+"',";
-							else
-								sql1 += linha[crs-1]+",";
 						}
+						
 					}
-					
 				}
 				if(tb.isMetaData()){
 					sql += "path,folder_id,";
@@ -307,13 +325,12 @@ public class Persistencia implements InterfacePersistencia {
 		}
 	}
 	
-	private void createSequence(String tableName, String id) throws CreateSequenceException, DBConnectionException{
+	public void createSequence(String tableName, String id) throws CreateSequenceException, DBConnectionException{
 		abraConexao();
 		try {
 			try{
 				DB_CONN.execute("DROP SEQUENCE "+tableName+"_"+id+"_seq CASCADE;");
 			}catch(SQLException e){
-				throw new CreateSequenceException(e.getMessage());
 			}
 			DB_CONN.execute("CREATE SEQUENCE "+tableName+"_"+id+"_seq START 1;");
 		} catch (SQLException e) {
@@ -322,12 +339,30 @@ public class Persistencia implements InterfacePersistencia {
 		fechaConexao();
 	}
 	
-	private int getSequence (String tableName, String id) throws GetSequenceException{
+	public int getSequence (String tableName, String id) throws GetSequenceException{
 		try{
 			return DB_CONN.getSequenceNextValue(tableName+"_"+id+"_seq");
 		}catch(SQLException e){
 			throw new GetSequenceException(e.getMessage());
 		}
+	}
+	
+	public int getSeq (String tableName, String id) throws GetSequenceException, DBConnectionException, CreateStatementException, SQLException{
+		abraConexao();
+		int seq = 0;
+		try {
+			DB_CONN.createStatement();
+		} catch (SQLException e1) {
+			throw new CreateStatementException(e1.getMessage());
+		}
+		try{
+			 seq = DB_CONN.getSequenceNextValue(tableName+"_"+id+"_seq");
+		}catch(SQLException e){
+			throw new GetSequenceException(e.getMessage());
+		}
+		DB_CONN.closeStatement();
+		fechaConexao();
+		return seq;
 	}
 
 	private static String getFileExtension(File file) {
@@ -336,6 +371,135 @@ public class Persistencia implements InterfacePersistencia {
 			return fileName.substring(fileName.lastIndexOf(".") + 1);
 		else
 			return "";
+	}
+
+	@Override
+	public ArrayList<String> getTableColumns(String tableName) throws DBConnectionException, GetTableColumnsException {
+		String sql = "select column_name from information_schema.columns where table_name='"+tableName+"';";
+		ArrayList<String> columns = new ArrayList<>();
+		abraConexao();
+			ResultSet rs;
+			try {
+				rs = DB_CONN.executeQuery(sql);
+				while(rs.next()){
+					String col = rs.getString(1);
+					columns.add(col);
+				}
+			} catch (SQLException e) {
+				throw new GetTableColumnsException(e.getMessage());
+			}
+		fechaConexao();
+		return columns;
+		
+	}
+	
+	public void addColumn(String tableName, String ColumnName, String columnType) throws DBConnectionException, AddColumnException{
+		String sql = "ALTER TABLE "+tableName+" ADD COLUMN "+ColumnName+" "+columnType+";";
+		this.abraConexao();
+		try {
+			DB_CONN.execute(sql);
+		} catch (SQLException e) {
+			throw new AddColumnException(e.getMessage());
+		}
+		this.fechaConexao();
+	}
+
+	public void createIndex(String tableName, String columnName, String indexType) throws DBConnectionException, SQLException {
+		try{
+			String s = "DROP INDEX "+tableName+"_"+columnName+"_idx"+";";
+			abraConexao();
+			DB_CONN.execute(s);
+			fechaConexao();
+		}catch(Exception e){
+		}
+		String sql = "CREATE INDEX "+tableName+"_"+columnName+"_idx"+" ON "+tableName+" USING "+indexType+"("+columnName+");";
+		abraConexao();
+		DB_CONN.execute(sql);
+		fechaConexao();
+		
+	}
+
+	public void dropColumn(String tableName, String ColumnName) {
+		String sql = "ALTER TABLE "+tableName+" DROP COLUMN "+ColumnName+";";
+		try {
+			abraConexao();
+			DB_CONN.execute(sql);
+			fechaConexao();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (DBConnectionException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	public Set<Integer> fetchTIDS(String columnName, String tableNameOrigin) throws DBConnectionException, SQLException {
+
+		String sql = "SELECT DISTINCT "+columnName+" from "+tableNameOrigin+";";
+		abraConexao();
+		ResultSet resultSet = DB_CONN.executeQuery(sql);
+		Set<Integer> result = new HashSet<Integer>();
+		while(resultSet.next()){
+			Integer tid = resultSet.getInt(columnName);
+			result.add(tid);
+		}
+		fechaConexao();
+		return result;
+		
+	}
+
+	public void moveDataFromColumnToColumn(String fromColumn, String toColumn, String tableName) throws DBConnectionException, SQLException {
+		String sql = "UPDATE "+tableName+" SET "+toColumn+"="+fromColumn+";";
+		abraConexao();
+		DB_CONN.execute(sql);
+		fechaConexao();
+		
+	}
+
+	public void dropIndex(String tableNameOrigin, String columnName) throws SQLException, DBConnectionException {
+		String sql = "DROP INDEX "+tableNameOrigin+"_"+columnName+"_idx"+";";
+		abraConexao();
+		DB_CONN.execute(sql);
+		fechaConexao();
+		
+	}
+
+	public Trajectory fetchTrajectory(Integer tid, ConfigTrajBroke configTrajBroke, String columnTID) throws DBConnectionException, SQLException {
+		String sql = "SELECT "+configTrajBroke.getColumnName("GID")+" as gid,"+
+					columnTID+" as tid,"+
+					configTrajBroke.getColumnName("TIMESTAMP")+" as timestamp,st_x("+
+					configTrajBroke.getColumnName("GEOM")+") as lon,st_y(geom) as lat";
+				sql += configTrajBroke.isStatus() ? ","+configTrajBroke.getColumnName("BOOLEAN STATUS") : "";
+				sql += " from "+ configTrajBroke.getTableNameOrigin()+
+				" where "+columnTID+"="+tid+" order by "+columnTID+","+configTrajBroke.getColumnName("TIMESTAMP")+";";
+		abraConexao();
+		ResultSet resultSet = DB_CONN.executeQuery(sql);
+		Trajectory result = new Trajectory(tid);
+		while(resultSet.next()){
+			Double x = resultSet.getDouble("lon");
+			Double y = resultSet.getDouble("lat");
+			Timestamp time = resultSet.getTimestamp("timestamp");
+			int gid = resultSet.getInt("gid");
+			int occupation = 0;
+			if(configTrajBroke.isStatus())
+				occupation = resultSet.getInt(configTrajBroke.getColumnName("BOOLEAN STATUS"));
+			TPoint p= new TPoint(gid,x,y,time,occupation);
+			result.addPoint(p);
+		}
+		fechaConexao();
+		return result;
+	}
+
+	public void updateTID(String sql) throws SQLException, DBConnectionException {
+		abraConexao();
+		DB_CONN.execute(sql);
+		fechaConexao();
+		
+	}
+	
+	public void deletePointWhere(String tableName, String columnName, String operator, double condition) throws SQLException, DBConnectionException{
+		abraConexao();
+		DB_CONN.execute("DELETE FROM "+tableName+" WHERE "+ columnName + operator + condition +";");
+		fechaConexao();
 	}
 	
 }

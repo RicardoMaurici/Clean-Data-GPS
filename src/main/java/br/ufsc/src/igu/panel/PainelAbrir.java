@@ -1,37 +1,50 @@
-package br.ufsc.src.igu.painel;
+package br.ufsc.src.igu.panel;
 
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.AbstractButton;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import org.jdesktop.swingx.prompt.PromptSupport;
 
-import br.ufsc.src.controle.ServicosControle;
-import br.ufsc.src.controle.Utils;
+import br.ufsc.src.control.ServiceControl;
+import br.ufsc.src.control.Utils;
 import br.ufsc.src.persistencia.exception.AddBatchException;
 import br.ufsc.src.persistencia.exception.CreateSequenceException;
 import br.ufsc.src.persistencia.exception.CreateStatementException;
@@ -48,7 +61,7 @@ import br.ufsc.src.persistencia.fonte.Diretorio;
 import br.ufsc.src.persistencia.fonte.TrajetoriaBruta;
 
 
-public class PainelAbrir extends PainelAbstrato {
+public class PainelAbrir extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel diretorioLabel, igLinhaLabel, separadorLabel,
@@ -63,15 +76,15 @@ public class PainelAbrir extends PainelAbstrato {
 	private JScrollPane table;
 	private JComboBox tiposCb;
 	
-	public PainelAbrir(ServicosControle controle) {
+	public PainelAbrir(ServiceControl controle) {
 		super("Carregar documento", controle, new JButton("Carregar"));
-		definaComponentes();
-		ajusteComponentes();
+		defineComponents();
+		adjustComponents();
 	}
 
-	public void definaComponentes() {
+	public void defineComponents() {
 		diretorioLabel = new JLabel("Local");
-		igLinhaLabel = new JLabel("N¼ linhas ig");
+		igLinhaLabel = new JLabel("Num lines ig");
 		separadorLabel = new JLabel("Separador");
 		formatoDataLabel = new JLabel("Formato data");
 		formatoHoraLabel = new JLabel("Formato hora");
@@ -119,34 +132,41 @@ public class PainelAbrir extends PainelAbstrato {
 		
 		
 		Object [] columnNames = new Object[]{ "Column", "Pos.", "Type", "Size" };
-        Object [][] data        = new Object[][]{ {"date", "", EnumTipos.CHARACTERVARYING.toString(),""}
-        											, {"time", "", EnumTipos.CHARACTERVARYING.toString(),""}
-        											, {"lat", "", EnumTipos.NUMERIC.toString(),""}
-        											, {"lon", "", EnumTipos.NUMERIC.toString(), ""}
-        											, {"timestamp", "", EnumTipos.TIMESTAMP.toString(), ""}
-        											, {"geom", "", EnumTipos.POINT.toString(), ""} };
+        Object [][] data        = new Object[][]{ {"date",     "1", EnumTypes.CHARACTERVARYING.toString(),""} //TODO testes
+        											, {"time", "", EnumTypes.CHARACTERVARYING.toString(),""}
+        											, {"lat",  "2", EnumTypes.NUMERIC.toString(),""}
+        											, {"lon",  "3", EnumTypes.NUMERIC.toString(), ""}
+        											, {"timestamp", "", EnumTypes.TIMESTAMP.toString(), ""}
+        											, {"geom", "", EnumTypes.POINT.toString(), ""} 
+        										};
         
         DefaultTableModel tab = new MyTableModel( data,columnNames, true );
         table1 = new JTable(tab);
         table = new JScrollPane(table1);
-        //DefaultTableModel model = (DefaultTableModel) table1.getModel();
         table1.setRowHeight( 25 );
         setUpColumnComboBox(table1, table1.getColumnModel().getColumn(2));
 		
-
-		extTf.setText("pdf");
+		diretorioTf.setText("/Users/rogerjames/Dropbox/Aplicativos/GPSLogger for Android/"); //TODO testes
+		igLinhaTf.setText("1");
+		separadorTf.setText(",");
+		formatoDataTf.setText("yyyy-MM-dd");
+		formatoHoraTf.setText("hh:mm:ss");
+		tabelaBancoTf.setText("tabela");
+		sridAtualTf.setText("4326");
+		
+		extTf.setText("pdf,zip");
 		igExt.setSelected(true);
 
 		addColunaBtn.addActionListener(this);
 		diretorioBtn.addActionListener(this);
 
-		botaoProcessa.setBackground(Color.DARK_GRAY);
+		processButton.setBackground(Color.DARK_GRAY);
 		diretorioBtn
-				.setToolTipText("Clique para selecionar o diret—rio/arquivo");
-		botaoProcessa.setToolTipText("Clique para carregar");
+				.setToolTipText("Clique para selecionar o diretÃ³rio/arquivo");
+		processButton.setToolTipText("Clique para carregar");
 	}
 
-	public void ajusteComponentes() {
+	public void adjustComponents() {
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);
 
@@ -232,10 +252,10 @@ public class PainelAbrir extends PainelAbstrato {
 				.addGroup(
 						layout.createParallelGroup(LEADING)
 								.addComponent(diretorioBtn)
-								.addComponent(botaoProcessa)
+								.addComponent(processButton)
 								.addComponent(addColunaBtn)));
 
-		layout.linkSize(SwingConstants.HORIZONTAL, botaoProcessa, diretorioBtn);
+		layout.linkSize(SwingConstants.HORIZONTAL, processButton, diretorioBtn);
 
 		layout.setVerticalGroup(layout
 				.createSequentialGroup()
@@ -314,7 +334,7 @@ public class PainelAbrir extends PainelAbstrato {
 																.addComponent(gid)
 																.addComponent(tid))
 												)
-								.addComponent(botaoProcessa))
+								.addComponent(processButton))
 							.addGroup(layout.createParallelGroup(BASELINE)
 												.addComponent(table))
 							.addGroup(layout.createParallelGroup(BASELINE)
@@ -398,10 +418,10 @@ public class PainelAbrir extends PainelAbstrato {
 			posicaoTf.setText("");
 			typeSizeTf.setText("");
 		
-		}else if (e.getSource() == botaoProcessa) {
-			if (!controle.isConnectionOpen())
+		}else if (e.getSource() == processButton) {
+			if (!control.testConnection())
 				JOptionPane.showMessageDialog(null, "PAUUUU",
-						"Conex‹o ao banco", JOptionPane.ERROR_MESSAGE);
+						"DB connection", JOptionPane.ERROR_MESSAGE);
 			else {	
 				if (verificaEntradas()) {
 					String inLocal = diretorioTf.getText();
@@ -419,7 +439,7 @@ public class PainelAbrir extends PainelAbstrato {
 						inSRIDAtual = Integer.parseInt(sridAtualTf.getText());
 					}catch(NumberFormatException ex){
 						JOptionPane.showMessageDialog(null,
-								"SRID n‹o Ž um nœmero, informe o SRID somente em nœmeros",
+								"SRID nï¿½o ï¿½ um nï¿½mero, informe o SRID somente em nï¿½meros",
 								"Carregar documento", JOptionPane.ERROR_MESSAGE);
 						sridAtualTf.requestFocus(true);
 						return;
@@ -429,7 +449,7 @@ public class PainelAbrir extends PainelAbstrato {
 							inSRIDNovo = Integer.parseInt(sridNovoTf.getText());
 						}catch(NumberFormatException ex){
 							JOptionPane.showMessageDialog(null,
-									"SRID n‹o Ž um nœmero, informe o SRID somente em nœmeros",
+									"SRID nï¿½o ï¿½ um nï¿½mero, informe o SRID somente em nï¿½meros",
 									"Carregar documento", JOptionPane.ERROR_MESSAGE);
 							sridNovoTf.requestFocus(true);
 							return;
@@ -446,7 +466,7 @@ public class PainelAbrir extends PainelAbstrato {
 					Diretorio dir = definicoesDiretorio(inLocal, inExt, inIgExt, inIgDir, inIgArq);
 					
 					try {
-						controle.createTable(tb);
+						control.createTable(tb);
 					} catch (SyntaxException e1){
 						JOptionPane.showMessageDialog(null,e1.getMsg(),"Loading data", JOptionPane.ERROR_MESSAGE);
 						tabelaBancoTf.requestFocus(true);
@@ -464,13 +484,13 @@ public class PainelAbrir extends PainelAbstrato {
 					
 					try {
 						long startTime = System.currentTimeMillis();
-						controle.carregaArquivo(tb, dir);
+						control.carregaArquivo(tb, dir);   
 						long endTime   = System.currentTimeMillis();
 						long totalTime = endTime - startTime;
 						JOptionPane.showMessageDialog(null, "Data loadaded \n"+Utils.getDurationBreakdown(totalTime),
 								"Loading data",
 								JOptionPane.INFORMATION_MESSAGE);
-						limpeTela();
+						clearWindow();
 					} catch (TimeStampException e1) {
 						JOptionPane.showMessageDialog(null, "Error converting timestamp: "+e1.getMsg(),
 								"Loading data", JOptionPane.ERROR_MESSAGE);
@@ -513,17 +533,17 @@ public class PainelAbrir extends PainelAbstrato {
 		String igDir[] = (inIgDir == null) ? new String[0] : inIgDir.split(",");
 		String igArq[] = (inIgArq == null) ? new String[0] : inIgArq.split(",");
 		dir.setUrl(url);
-		dir.setExtensao(new ArrayList<String>(Arrays.asList(igExt)));
-		dir.setIgDiretorio(new ArrayList<String>(Arrays.asList(igDir)));
-		dir.setIgArquivo(new ArrayList<String>(Arrays.asList(igArq)));
-		dir.setIgExtensao(inIgExt);
+		dir.setExtension(new ArrayList<String>(Arrays.asList(igExt)));
+		dir.setIgFolder(new ArrayList<String>(Arrays.asList(igDir)));
+		dir.setIgFile(new ArrayList<String>(Arrays.asList(igArq)));
+		dir.setIgExtension(inIgExt);
 		return dir;
 	}
 
 	private boolean verificaEntradas() {
 		if (diretorioTf.getText().length() == 0) {
 			JOptionPane.showMessageDialog(null,
-					"Informe o diret—rio ou arquivo a ser carregado",
+					"Informe o diretï¿½rio ou arquivo a ser carregado",
 					"Carregar documento", JOptionPane.ERROR_MESSAGE);
 			diretorioTf.requestFocus(true);
 			return false;
@@ -531,7 +551,7 @@ public class PainelAbrir extends PainelAbstrato {
 			JOptionPane
 					.showMessageDialog(
 							null,
-							"Informe o nœmero de linhas a ser ignorados no inicio do arquivo",
+							"Informe o nï¿½mero de linhas a ser ignorados no inicio do arquivo",
 							"Carregar documento", JOptionPane.ERROR_MESSAGE);
 			igLinhaTf.requestFocus(true);
 			return false;
@@ -549,17 +569,11 @@ public class PainelAbrir extends PainelAbstrato {
 					"Carregar documento", JOptionPane.ERROR_MESSAGE);
 			formatoDataTf.requestFocus(true);
 			return false;
-		} else if (formatoHoraTf.getText().length() == 0 && formatoDataTf.getText().length() != 0) {
-			JOptionPane.showMessageDialog(null,
-					"Informe o formato da hora no arquivo a ser carregado",
-					"Carregar documento", JOptionPane.ERROR_MESSAGE);
-			formatoHoraTf.requestFocus(true);
-			return false;
 		}else if (tabelaBancoTf.getText().length() == 0) {
 			JOptionPane
 					.showMessageDialog(
 							null,
-							"Informe o nome da tabela no banco de dados que os dados ser‹o inseridos",
+							"Informe o nome da tabela no banco de dados que os dados serï¿½o inseridos",
 							"Carregar documento", JOptionPane.ERROR_MESSAGE);
 			tabelaBancoTf.requestFocus(true);
 			return false;
@@ -586,16 +600,16 @@ public class PainelAbrir extends PainelAbstrato {
 	 
 	public String[] getTypes(){
 		String[] types = new String[] {
-				EnumTipos.VARCHAR.toString()
-				,EnumTipos.INTEGER.toString() 			 	
-			 	,EnumTipos.SMALLINT.toString()
-			 	,EnumTipos.SERIAL.toString()
-			 	,EnumTipos.DECIMAL.toString()
-			 	,EnumTipos.NUMERIC.toString()
-			 	,EnumTipos.REAL.toString()
-			 	,EnumTipos.CHARACTERVARYING.toString()
-			 	,EnumTipos.TIMESTAMP.toString()
-			 	,EnumTipos.POINT.toString()
+				EnumTypes.VARCHAR.toString()
+				,EnumTypes.INTEGER.toString() 			 	
+			 	,EnumTypes.SMALLINT.toString()
+			 	,EnumTypes.SERIAL.toString()
+			 	,EnumTypes.DECIMAL.toString()
+			 	,EnumTypes.NUMERIC.toString()
+			 	,EnumTypes.REAL.toString()
+			 	,EnumTypes.CHARACTERVARYING.toString()
+			 	,EnumTypes.TIMESTAMP.toString()
+			 	,EnumTypes.POINT.toString()
 		};
 		return types;
 	}

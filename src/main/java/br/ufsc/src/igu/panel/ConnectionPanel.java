@@ -1,4 +1,4 @@
-package br.ufsc.src.igu.painel;
+package br.ufsc.src.igu.panel;
 
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -12,22 +12,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import br.ufsc.src.controle.ServicosControle;
+import br.ufsc.src.control.ServiceControl;
 
-public class PainelConexao extends PainelAbstrato {
+public class ConnectionPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField driverTf, urlTf, senhaTf, usuarioTf, bancoTf;
+	private JTextField driverTf, urlTf, passwordTf, userTf, bancoTf;
 	private JLabel driverLabel, urlLabel, senhaLabel, usuarioLabel, bancoLabel;
 	private JButton testeBtn;
 
-	public PainelConexao(ServicosControle controle) {
-		super("Conex‹o ao banco de dados", controle, new JButton("Conectar"));
-		definaComponentes();
-		ajusteComponentes();
+	public ConnectionPanel(ServiceControl controle) {
+		super("Connection to DB", controle, new JButton("Connect"));
+		defineComponents();
+		adjustComponents();
 	}
-
-	public void ajusteComponentes() {
+	
+	@Override
+	public void adjustComponents() {
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);
 
@@ -47,14 +48,14 @@ public class PainelConexao extends PainelAbstrato {
 								layout.createParallelGroup(LEADING)
 								.addComponent(driverTf)
 								.addComponent(urlTf)
-								.addComponent(usuarioTf)
-								.addComponent(senhaTf)
+								.addComponent(userTf)
+								.addComponent(passwordTf)
 								.addComponent(bancoTf)
-								.addComponent(botaoProcessa))
+								.addComponent(processButton))
 								
 				);
 
-		layout.linkSize(SwingConstants.HORIZONTAL,botaoProcessa);
+		layout.linkSize(SwingConstants.HORIZONTAL,processButton);
 
 		layout.setVerticalGroup(layout
 				.createSequentialGroup()
@@ -69,11 +70,11 @@ public class PainelConexao extends PainelAbstrato {
 								.addGroup(
 										layout.createParallelGroup(BASELINE)
 										.addComponent(usuarioLabel)
-										.addComponent(usuarioTf))
+										.addComponent(userTf))
 								.addGroup(
 										layout.createParallelGroup(BASELINE)
 										.addComponent(senhaLabel)
-										.addComponent(senhaTf))
+										.addComponent(passwordTf))
 												.addGroup(
 														layout.createParallelGroup(BASELINE)
 														.addComponent(bancoLabel)
@@ -81,52 +82,50 @@ public class PainelConexao extends PainelAbstrato {
 														.addGroup(
 																layout.createParallelGroup(BASELINE)
 																.addComponent(testeBtn)
-																.addComponent(botaoProcessa)));
+																.addComponent(processButton)));
 	}
 
 	@Override
-	public void definaComponentes() {
+	public void defineComponents() {
 		driverLabel = new JLabel("Driver Postgres:");
 		urlLabel = new JLabel("URL:");
-		senhaLabel = new JLabel("Senha");
-		usuarioLabel = new JLabel("Usu‡rio");
-		bancoLabel = new JLabel("Banco");
+		senhaLabel = new JLabel("Password");
+		usuarioLabel = new JLabel("User");
+		bancoLabel = new JLabel("Database");
 		driverTf = new JTextField();
 		urlTf = new JTextField();
-		senhaTf  = new JTextField();
-		usuarioTf = new JTextField();
+		passwordTf  = new JTextField();
+		userTf = new JTextField();
 		bancoTf = new JTextField();
-		testeBtn = new JButton("Testar conex‹o");
+		testeBtn = new JButton("Test connection");
 		testeBtn.addActionListener(this);
 		driverTf.setText("org.postgresql.Driver");
 		urlTf.setText("jdbc:postgresql://localhost/");
-		
-
 
 		bancoTf.setToolTipText("Defina o nome do album");
-		botaoProcessa.setToolTipText("Clique para processar");
-		senhaTf.setToolTipText("Defina o diretorio do Album");
+		processButton.setToolTipText("Clique para processar");
+		passwordTf.setToolTipText("Defina o diretorio do Album");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String drive = driverTf.getText();
 		String url = urlTf.getText();
-		String usuario = usuarioTf.getText();
-		String senha = senhaTf.getText();
+		String usuario = userTf.getText();
+		String senha = passwordTf.getText();
 		String banco = bancoTf.getText();
 		if (e.getSource() == testeBtn) {
-			if(this.controle.testarBanco(drive, url, usuario, senha, banco))
-				JOptionPane.showMessageDialog(null, "Conex‹o estabelecida", "Conex‹o ao banco", JOptionPane.INFORMATION_MESSAGE);
+			if(this.control.testarBanco(drive, url, usuario, senha, banco))
+				JOptionPane.showMessageDialog(null, "Connection established", "Connection to DB", JOptionPane.INFORMATION_MESSAGE);
 			else
-				JOptionPane.showMessageDialog(null, "Falha ao conectar ao banco de dados",  "Conex‹o ao banco",0);
-		} else if (e.getSource() == botaoProcessa) {
-			this.controle.criaConexao(drive, url, usuario, senha, banco);
-			if(this.controle.testarBanco(drive, url, usuario, senha, banco)){
-				JOptionPane.showMessageDialog(null, "Conex‹o estabelecida", "Conex‹o ao banco", JOptionPane.INFORMATION_MESSAGE);
-				limpeTela();
+				JOptionPane.showMessageDialog(null, "Connection to DB failed",  "Connection to DB",0);
+		} else if (e.getSource() == processButton) {
+			this.control.criaConexao(drive, url, usuario, senha, banco);
+			if(this.control.testarBanco(drive, url, usuario, senha, banco)){
+				JOptionPane.showMessageDialog(null, "Connection established", "Connection to DB", JOptionPane.INFORMATION_MESSAGE);
+				clearWindow();
 			}else
-				JOptionPane.showMessageDialog(null, "Falha ao conectar ao banco de dados",  "Conex‹o ao banco",0);
+				JOptionPane.showMessageDialog(null, "Connection to DB failed",  "Connection to DB",0);
 		}
 		
 	}

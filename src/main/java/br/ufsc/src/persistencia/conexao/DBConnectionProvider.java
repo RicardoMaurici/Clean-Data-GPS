@@ -2,6 +2,7 @@ package br.ufsc.src.persistencia.conexao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,6 +28,7 @@ public final class DBConnectionProvider {
 	private static Connection conn;
 	private static boolean isConnectionOpen = false;
 	private static Statement statement;
+	private static PreparedStatement preparedStatement;
 	
 	static{
 		try {
@@ -48,7 +50,7 @@ public final class DBConnectionProvider {
      */
 	public void open() throws SQLException{
 		if(isConnectionOpen) return;
-		
+		if(DBConfig.url.length() == 0) return;
 		conn = DriverManager.getConnection(DBConfig.url + DBConfig.banco, DBConfig.usuario, DBConfig.senha);
 		isConnectionOpen = true;
 
@@ -105,6 +107,9 @@ public final class DBConnectionProvider {
 		return seq.getInt("nextVal");
 	}
 	
+	public void startStatement() throws SQLException{
+		this.createStatement();
+	}
 
 	/**
 	 * Auxiliar internal method to help building SQL queries.
@@ -206,4 +211,5 @@ public final class DBConnectionProvider {
 	public void commit() throws SQLException {
 		conn.commit();
 	}
+	
 }

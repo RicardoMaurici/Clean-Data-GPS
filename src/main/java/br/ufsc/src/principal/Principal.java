@@ -2,8 +2,8 @@ package br.ufsc.src.principal;
 
 import javax.swing.SwingUtilities;
 
-import br.ufsc.src.controle.ServicosControle;
-import br.ufsc.src.igu.JanelaPrincipal;
+import br.ufsc.src.control.ServiceControl;
+import br.ufsc.src.igu.MainWindow;
 import br.ufsc.src.persistencia.InterfacePersistencia;
 import br.ufsc.src.persistencia.Persistencia;
 
@@ -13,10 +13,10 @@ public class Principal {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			InterfacePersistencia persistencia = new Persistencia();
-			ServicosControle controle = new ServicosControle(persistencia);
-			JanelaPrincipal janelaPrincipal = new JanelaPrincipal(controle);
+			ServiceControl control = new ServiceControl(persistencia);
+			MainWindow mainWindow = new MainWindow(control);
 			public void run() {
-				janelaPrincipal.interaja();
+				mainWindow.interact();
 			}
 		});
 	}

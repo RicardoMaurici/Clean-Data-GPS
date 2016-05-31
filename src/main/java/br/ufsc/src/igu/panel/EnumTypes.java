@@ -1,6 +1,6 @@
-package br.ufsc.src.igu.painel;
+package br.ufsc.src.igu.panel;
 
-public enum EnumTipos {
+public enum EnumTypes {
 	INTEGER ("integer")
 	,SMALLINT ("smallint")
 	,VARCHAR ("varchar")
@@ -13,13 +13,13 @@ public enum EnumTipos {
 	,POINT ("geometry(Point)");
 	
 	
-	private String tipo;
+	private String type;
 	
-	EnumTipos(String tp){
-		this.tipo = tp;
+	EnumTypes(String tp){
+		this.type = tp;
 	}
 	
 	public String toString(){
-		return this.tipo;
+		return this.type;
 	}
 }

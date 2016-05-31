@@ -4,18 +4,18 @@ import java.util.ArrayList;
 
 public class Diretorio {
 	private String url;
-	private boolean igExtensao;
-	private ArrayList<String>extensao = new ArrayList<String>();
-	private ArrayList<String>igDiretorio = new ArrayList<String>();
-	private ArrayList<String>igArquivo = new ArrayList<String>();
+	private boolean igExtension;
+	private ArrayList<String>extension = new ArrayList<String>();
+	private ArrayList<String>igFolder = new ArrayList<String>();
+	private ArrayList<String>igFile = new ArrayList<String>();
 	
 	public String toString(){
 		return "------- Diretorio -------"
 				+"\n url: "+url
-				+"\n Ignorar extensao: "+igExtensao
-				+"\n Extensoes: "+extensao.toString()
-				+"\n Ignorar diretorios: "+igDiretorio.toString()
-				+"\n Ignorar arquivos: "+igArquivo.toString();
+				+"\n Ignore extension: "+igExtension
+				+"\n Extension: "+extension.toString()
+				+"\n Ignore folders: "+igFolder.toString()
+				+"\n Ignore files: "+igFile.toString();
 	}
 	
 	public String getUrl() {
@@ -26,28 +26,28 @@ public class Diretorio {
 		this.url = url;
 	}
 
-	public boolean isIgExtensao() {
-		return igExtensao;
+	public boolean isIgExtension() {
+		return igExtension;
 	}
-	public void setIgExtensao(boolean igExtensao) {
-		this.igExtensao = igExtensao;
+	public void setIgExtension(boolean igExtension) {
+		this.igExtension = igExtension;
 	}
-	public ArrayList<String> getExtensao() {
-		return extensao;
+	public ArrayList<String> getExtension() {
+		return extension;
 	}
-	public void setExtensao(ArrayList<String> extensao) {
-		this.extensao = extensao;
+	public void setExtension(ArrayList<String> extension) {
+		this.extension = extension;
 	}
-	public ArrayList<String> getIgDiretorio() {
-		return igDiretorio;
+	public ArrayList<String> getIgFolder() {
+		return igFolder;
 	}
-	public void setIgDiretorio(ArrayList<String> igDiretorio) {
-		this.igDiretorio = igDiretorio;
+	public void setIgFolder(ArrayList<String> igFolder) {
+		this.igFolder = igFolder;
 	}
-	public ArrayList<String> getIgArquivo() {
-		return igArquivo;
+	public ArrayList<String> getIgFile() {
+		return igFile;
 	}
-	public void setIgArquivo(ArrayList<String> igArquivo) {
-		this.igArquivo = igArquivo;
+	public void setIgFile(ArrayList<String> igFile) {
+		this.igFile = igFile;
 	}
 }
