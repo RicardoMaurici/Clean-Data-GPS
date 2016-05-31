@@ -61,7 +61,7 @@ import br.ufsc.src.persistencia.fonte.Diretorio;
 import br.ufsc.src.persistencia.fonte.TrajetoriaBruta;
 
 
-public class PainelAbrir extends AbstractPanel {
+public class LoadPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel diretorioLabel, igLinhaLabel, separadorLabel,
@@ -76,7 +76,7 @@ public class PainelAbrir extends AbstractPanel {
 	private JScrollPane table;
 	private JComboBox tiposCb;
 	
-	public PainelAbrir(ServiceControl controle) {
+	public LoadPanel(ServiceControl controle) {
 		super("Carregar documento", controle, new JButton("Carregar"));
 		defineComponents();
 		adjustComponents();

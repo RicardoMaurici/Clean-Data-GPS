@@ -81,7 +81,7 @@ public class DataCleanPanel extends AbstractPanel{
         table1.setRowHeight( 25 );
         setUpColumnComboBox(table1, table1.getColumnModel().getColumn(1));
         
-        
+
 		
 	}
 	
@@ -185,7 +185,13 @@ public class DataCleanPanel extends AbstractPanel{
 			ConfigTrajBroke configTrajBroke = getDataFromWindow();
 			if(configTrajBroke != null){
 				try {
-					control.brokeTraj(configTrajBroke);
+					long startTime = System.currentTimeMillis();
+					control.brokeTraj(configTrajBroke);   
+					long endTime   = System.currentTimeMillis();
+					long totalTime = endTime - startTime;
+					JOptionPane.showMessageDialog(null, "Broken Trajectories \n"+Utils.getDurationBreakdown(totalTime),
+							"Data Clean",
+							JOptionPane.INFORMATION_MESSAGE);
 				} catch (DBConnectionException e1) {
 					JOptionPane.showMessageDialog(null, "DB connection error: "+e1.getMsg(),
 							"Data Clean", JOptionPane.ERROR_MESSAGE);

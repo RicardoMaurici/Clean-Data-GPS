@@ -33,7 +33,7 @@ public class ServiceControl {
 	public ServiceControl(InterfacePersistencia persistencia){
 		this.persistencia = persistencia;
 		
-		
+
 	}
 	
 	public boolean testarBanco(String drive, String url, String usuario, String senha, String banco){

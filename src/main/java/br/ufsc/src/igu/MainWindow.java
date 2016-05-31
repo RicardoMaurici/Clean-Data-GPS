@@ -13,7 +13,7 @@ import javax.swing.UIManager;
 import br.ufsc.src.control.ServiceControl;
 import br.ufsc.src.igu.panel.AbstractPanel;
 import br.ufsc.src.igu.panel.DataCleanPanel;
-import br.ufsc.src.igu.panel.PainelAbrir;
+import br.ufsc.src.igu.panel.LoadPanel;
 import br.ufsc.src.igu.panel.ConnectionPanel;
 
 
@@ -65,7 +65,7 @@ public class MainWindow extends JFrame implements ActionListener {
 			panel = new ConnectionPanel(control);
 			break;
 		case OPTIONOPEN:
-			panel = new PainelAbrir(control);
+			panel = new LoadPanel(control);
 			break;
 		case OPTIONDATACLEAN:
 			panel = new DataCleanPanel(control);
