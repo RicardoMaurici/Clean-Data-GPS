@@ -33,7 +33,7 @@ public class Utils {
 				throw new TimeStampException(e.getMessage());
 			}
 
-		}else if(timeFormat.length() > 0){ //dateFormat to dateFormat
+		}else if(dateFormat.length() > 0){ //dateFormat to dateFormat
 				timeFormat = " "+timeFormat;
 			try {
 				DateFormat formatter;
@@ -94,6 +94,7 @@ public class Utils {
 	}
 	
 	public static double euclidean(Point p1,Point p2){
+		System.out.println("Euclidean");
 		double distX = Math.abs(p1.getX()-p2.getX());
 		double distXSquare = distX*distX;
 		
