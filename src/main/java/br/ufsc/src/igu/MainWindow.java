@@ -12,9 +12,11 @@ import javax.swing.UIManager;
 
 import br.ufsc.src.control.ServiceControl;
 import br.ufsc.src.igu.panel.AbstractPanel;
-import br.ufsc.src.igu.panel.DataCleanPanel;
-import br.ufsc.src.igu.panel.LoadPanel;
+import br.ufsc.src.igu.panel.BrokeTrajectory;
+import br.ufsc.src.igu.panel.LoadPanelDSV;
+import br.ufsc.src.igu.panel.RemoveNoisePanel;
 import br.ufsc.src.igu.panel.ConnectionPanel;
+import br.ufsc.src.igu.panel.LoadPanel;
 
 
 public class MainWindow extends JFrame implements ActionListener {
@@ -64,11 +66,17 @@ public class MainWindow extends JFrame implements ActionListener {
 		case OPTIONCONECTION:
 			panel = new ConnectionPanel(control);
 			break;
+		case OPTIONOPENDSV:
+			panel = new LoadPanelDSV(control);
+			break;
 		case OPTIONOPEN:
 			panel = new LoadPanel(control);
 			break;
-		case OPTIONDATACLEAN:
-			panel = new DataCleanPanel(control);
+		case OPTIONDBROKETRAJECTORY:
+			panel = new BrokeTrajectory(control);
+			break;
+		case OPTIONREMOVENOISE:
+			panel = new RemoveNoisePanel(control);
 			break;
 		} 
 		setContentPane(panel);

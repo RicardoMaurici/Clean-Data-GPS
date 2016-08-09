@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
 
-import br.ufsc.src.control.dataclean.ConfigTrajBroke;
+import br.ufsc.src.control.dataclean.ConfigTraj;
 import br.ufsc.src.control.entities.Trajectory;
 import br.ufsc.src.persistencia.exception.AddBatchException;
 import br.ufsc.src.persistencia.exception.AddColumnException;
@@ -43,15 +43,13 @@ public interface InterfacePersistencia {
 	
 	public void createSequence(String tableName, String id) throws CreateSequenceException, DBConnectionException;
 	
-	public int getSequence (String tableName, String id) throws GetSequenceException;
-	
 	public int getSeq (String tableName, String id) throws GetSequenceException, DBConnectionException, CreateStatementException, SQLException;
 
 	public void moveDataFromColumnToColumn(String columnName, String string, String tableName) throws DBConnectionException, SQLException;
 
 	public void dropIndex(String tableNameOrigin, String columnName) throws SQLException, DBConnectionException;
 
-	public Trajectory fetchTrajectory(Integer tid, ConfigTrajBroke configTrajBroke, String columnTID) throws DBConnectionException, SQLException;
+	public Trajectory fetchTrajectory(Integer tid, ConfigTraj configTrajBroke, String columnTID) throws DBConnectionException, SQLException;
 
 	public void updateTID(String string) throws SQLException, DBConnectionException;
 	

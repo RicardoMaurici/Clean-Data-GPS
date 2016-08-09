@@ -19,17 +19,34 @@ public class MenuBar extends JMenuBar {
 		menu = new JMenu("File");
 		add(menu);
 		
-		item = new JMenuItem("Open");
+		item = new JMenuItem("Load DSV");
+		menu.add(item);
+		item.setActionCommand(EnumMenuOption.OPTIONOPENDSV.name());
+		item.addActionListener(mainWindow);
+		
+		item = new JMenuItem("Load JSON/GPX/KML/WKT");
 		menu.add(item);
 		item.setActionCommand(EnumMenuOption.OPTIONOPEN.name());
+		item.addActionListener(mainWindow);
+		
+		menu.addSeparator();
+		
+		item = new JMenuItem("Export table to CSV");
+		menu.add(item);
+		item.setActionCommand(EnumMenuOption.OPTIONEXPORTCSV.name());
 		item.addActionListener(mainWindow);
 		
 		menu = new JMenu("Data Clean");
 		add(menu);
 		
-		item = new JMenuItem("Clean Trajectories");
+		item = new JMenuItem("Broke Trajectories");
 		menu.add(item);
-		item.setActionCommand(EnumMenuOption.OPTIONDATACLEAN.name());
+		item.setActionCommand(EnumMenuOption.OPTIONDBROKETRAJECTORY.name());
+		item.addActionListener(mainWindow);
+		
+		item = new JMenuItem("Remove Noise");
+		menu.add(item);
+		item.setActionCommand(EnumMenuOption.OPTIONREMOVENOISE.name());
 		item.addActionListener(mainWindow);
 		
 		menu = new JMenu("Configuration");

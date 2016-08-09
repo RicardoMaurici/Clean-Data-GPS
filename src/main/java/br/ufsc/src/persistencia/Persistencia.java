@@ -1,21 +1,18 @@
 package br.ufsc.src.persistencia;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.postgresql.util.PSQLException;
 
 import br.ufsc.src.control.Utils;
-import br.ufsc.src.control.dataclean.ConfigTrajBroke;
+import br.ufsc.src.control.dataclean.ConfigTraj;
 import br.ufsc.src.control.entities.TPoint;
 import br.ufsc.src.control.entities.Trajectory;
 import br.ufsc.src.persistencia.conexao.DBConfig;
@@ -35,6 +32,12 @@ import br.ufsc.src.persistencia.exception.SyntaxException;
 import br.ufsc.src.persistencia.exception.TimeStampException;
 import br.ufsc.src.persistencia.exception.UpdateGeomException;
 import br.ufsc.src.persistencia.fonte.Diretorio;
+import br.ufsc.src.persistencia.fonte.ILoader;
+import br.ufsc.src.persistencia.fonte.LoaderDSV;
+import br.ufsc.src.persistencia.fonte.LoaderGPX;
+import br.ufsc.src.persistencia.fonte.LoaderJSON;
+import br.ufsc.src.persistencia.fonte.LoaderKML;
+import br.ufsc.src.persistencia.fonte.LoaderWKT;
 import br.ufsc.src.persistencia.fonte.TrajetoriaBruta;
 
 public class Persistencia implements InterfacePersistencia {
@@ -70,7 +73,7 @@ public class Persistencia implements InterfacePersistencia {
 		this.fechaConexao();
 	}
 
-	public void abraConexao() throws DBConnectionException{
+	public static void abraConexao() throws DBConnectionException{
 		try {
 			DBConnectionProvider.getInstance().open();
 		} catch (SQLException e) {
@@ -78,7 +81,7 @@ public class Persistencia implements InterfacePersistencia {
 		}
 	}
 
-	public void fechaConexao() throws DBConnectionException{
+	public static void fechaConexao() throws DBConnectionException{
 		try {
 			DBConnectionProvider.getInstance().close();
 		} catch (SQLException e) {
@@ -138,7 +141,6 @@ public class Persistencia implements InterfacePersistencia {
 		q = q.trim().toLowerCase();
 		q = q.substring(0, q.length()-1);
 		q += ");";
-
 		this.abraConexao();
 		try {
 			DB_CONN.execute(q);
@@ -159,158 +161,48 @@ public class Persistencia implements InterfacePersistencia {
 			
 			for (File file : listOfFiles) {
 				if (file.isFile() && !igFiles.contains(file.getName().split("\\.")[0])) {
-					if (file.getName().lastIndexOf(".") != 0 && (ext.isEmpty() || (ext.contains(getFileExtension(file)) == !aceitaExtensao))) {
+					if (file.getName().lastIndexOf(".") != 0 && (ext.isEmpty() || (ext.contains(Utils.getFileExtension(file)) == !aceitaExtensao))) {
 						if(!folder.getParent().equalsIgnoreCase(path)){
 							path = folder.getParent();
 							folder_id++;
 						}
-						this.leiaArquivo(file, trajBruta, folder_id);
+						this.loadFile(file, trajBruta, folder_id);
 					}	
 				} else if (file.isDirectory() && !igDir.contains(file.getName()))	
 					this.leiaCarregaDiretorios(file.getAbsolutePath(), igFiles, igDir, ext, aceitaExtensao, trajBruta);
 			}
 		} else if (!igFiles.contains(folder.getName().split("\\.")[0])) {
-			if (folder.getName().lastIndexOf(".") != 0 && (ext.isEmpty() || (ext.contains(getFileExtension(folder)) == !aceitaExtensao))){
+			if (folder.getName().lastIndexOf(".") != 0 && (ext.isEmpty() || (ext.contains(Utils.getFileExtension(folder)) == !aceitaExtensao))){
 				if(!folder.getParent().equalsIgnoreCase(path)){
 					path = folder.getParent();
 					folder_id++;
 				}
-				this.leiaArquivo(folder, trajBruta, folder_id);
+				this.loadFile(folder, trajBruta, folder_id);
 			}
 		}
 	
 	}
-
-	private void leiaArquivo(File file, TrajetoriaBruta tb, int folder_id) throws TimeStampException, GetSequenceException, CreateStatementException, AddBatchException, FileNFoundException, ExecuteBatchException, DBConnectionException {
-		Scanner scanner;
-		int posDate = -1;
-		int posTime = -1;
-		int posLon = -1;
-		int posLat = -1;
-		int colPos = -1;
-		Object[][] tableData = tb.getTableData();
-		
-		for (int i = 0; i <= tableData.length - 1; i++) {
-			String colName = (String)tableData[i][0];
-			String cs = (String)tableData[i][1];
-			try{
-				colPos = Integer.parseInt(cs);
-			}catch(NumberFormatException e){
-				colPos = -1;
-			}
-			if(colName.equalsIgnoreCase("date"))
-				posDate = colPos;
-			else if(colName.equalsIgnoreCase("time"))
-				posTime = colPos;
-			else if(colName.equalsIgnoreCase("lat"))
-				posLat = colPos;
-			else if(colName.equalsIgnoreCase("lon"))
-				posLon = colPos;
+	
+	private void loadFile(File file, TrajetoriaBruta tb, int folder_id) throws TimeStampException, GetSequenceException, CreateStatementException, AddBatchException, FileNFoundException, ExecuteBatchException, DBConnectionException{
+		ILoader leitor = null;
+		System.out.println(DB_CONN.toString());
+		switch (Utils.getFileExtension(file).toLowerCase()) {
+			case "kml":
+				leitor = new LoaderKML();
+				break;
+			case "gpx":
+				leitor = new LoaderGPX();
+				break;
+			case "wkt":
+				leitor = new LoaderWKT();
+				break;
+			case "json":
+				leitor = new LoaderJSON();
+				break;
+			default:
+				leitor = new LoaderDSV();
 		}
-
-		String date = "";
-		String time = "";
-		String lon = "";
-		String lat = "";
-		String timestamp = "";
-		String sql = "";
-		this.abraConexao();
-		try {
-			DB_CONN.createStatement();
-		} catch (SQLException e1) {
-			throw new CreateStatementException(e1.getMessage());
-		}
-		int seq = 0;
-		if(tb.isTID())
-			seq = getSequence(tb.getTabelaBanco(), "tid");
-		try {
-			scanner = new Scanner(new FileReader(file.getAbsolutePath()));
-			for (int i = 0; i < tb.getNroLinhasIgnorar(); i++) { //ignore initial lines
-				if (scanner.hasNextLine())
-					scanner.nextLine();
-			}
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				String[] linha = line.split(tb.getSeparador());
-				if(posDate >= 0)
-					date = linha[posDate-1];
-				if(posTime >= 0)
-					time = linha[posTime-1];
-				
-				boolean tstamp = (tb.getFormatoData().equalsIgnoreCase("") && tb.getFormatoHorario().equalsIgnoreCase("")); 
-				timestamp = Utils.getTimeStamp(date, time, tb.getFormatoData(), tb.getFormatoHorario(), tstamp); 												
-				
-				sql = "insert into "+tb.getTabelaBanco()+" (";
-				String sql1 = ") values (";
-				
-				if(posLon >= 0 && posLat >= 0 ){
-					lon = linha[posLon-1];
-					lat = linha[posLat-1];
-					sql += "geom,";
-					sql1 += "ST_SetSRID(ST_MakePoint("+lon+","+lat+"),"+tb.getSridAtual()+"),";
-				}
-				sql += "timestamp,";
-				sql1 += "'"+timestamp+"',";
-				
-				for (int i = 0; i <= tableData.length - 1; i++) {
-					String aux = (String)tableData[i][0];
-					if(!aux.equalsIgnoreCase("geom") && !aux.equalsIgnoreCase("timestamp")){
-						
-						String cs = (String)tableData[i][1];
-						int crs = -1;
-						try{
-							crs = Integer.parseInt(cs);
-						}catch(NumberFormatException e){
-							crs = -1;
-						}
-						if(aux.equalsIgnoreCase("time") && crs == -1)
-							continue;
-						else
-							sql += (String)tableData[i][0]+",";
-						if(crs != -1){
-							if(aux.equalsIgnoreCase("time")){
-									sql1 += "'"+linha[crs-1]+"',";
-							}else if(aux.equalsIgnoreCase("date")){
-								if(linha[crs-1].indexOf('T') != -1)
-									sql1 += "'"+linha[crs-1].split("T")[0]+"',";
-								else 
-									sql1 += "'"+linha[crs-1]+"',";
-							}else
-								sql1 += "'"+linha[crs-1]+"',";
-						}
-						
-					}
-				}
-				if(tb.isMetaData()){
-					sql += "path,folder_id,";
-					sql1 += "'"+file.getAbsolutePath()+"',"+folder_id+",";
-				}
-				if(tb.isTID()){
-					sql += "tid,";
-					sql1 += seq+",";
-				}
-				
-				sql = sql.trim().substring(0, sql.length()-1);
-				sql1 = sql1.trim().substring(0,sql1.length()-1);
-				sql += sql1+")";
-				try {
-					DB_CONN.addBatch(sql);
-				} catch (SQLException e) {
-					throw new AddBatchException(e.getMessage());
-				}
-			
-			}
-		} catch (FileNotFoundException e) {
-			throw new FileNFoundException(e.getMessage());
-		}
-		try {
-			DB_CONN.executeBatch();
-			DB_CONN.closeStatement();
-		} catch (SQLException e) {
-			throw new ExecuteBatchException(e.getMessage());
-		}
-		this.fechaConexao();
-		
+		leitor.loadFile(file, tb, folder_id);
 	}
 
 	private void updateGeom(int newSrid, int currentSrid, String tableName) throws UpdateGeomException, DBConnectionException{
@@ -339,7 +231,7 @@ public class Persistencia implements InterfacePersistencia {
 		fechaConexao();
 	}
 	
-	public int getSequence (String tableName, String id) throws GetSequenceException{
+	public static int getSequence (String tableName, String id) throws GetSequenceException{
 		try{
 			return DB_CONN.getSequenceNextValue(tableName+"_"+id+"_seq");
 		}catch(SQLException e){
@@ -363,14 +255,6 @@ public class Persistencia implements InterfacePersistencia {
 		DB_CONN.closeStatement();
 		fechaConexao();
 		return seq;
-	}
-
-	private static String getFileExtension(File file) {
-		String fileName = file.getName();
-		if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-			return fileName.substring(fileName.lastIndexOf(".") + 1);
-		else
-			return "";
 	}
 
 	@Override
@@ -463,7 +347,7 @@ public class Persistencia implements InterfacePersistencia {
 		
 	}
 
-	public Trajectory fetchTrajectory(Integer tid, ConfigTrajBroke configTrajBroke, String columnTID) throws DBConnectionException, SQLException {
+	public Trajectory fetchTrajectory(Integer tid, ConfigTraj configTrajBroke, String columnTID) throws DBConnectionException, SQLException {
 		String sql = "SELECT "+configTrajBroke.getColumnName("GID")+" as gid,"+
 					columnTID+" as tid,"+
 					configTrajBroke.getColumnName("TIMESTAMP")+" as timestamp,st_x("+

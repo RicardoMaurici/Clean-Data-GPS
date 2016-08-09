@@ -4,7 +4,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
 
-import br.ufsc.src.control.dataclean.ConfigTrajBroke;
+import br.ufsc.src.control.dataclean.ConfigTraj;
+import br.ufsc.src.control.dataclean.RemoveNoise;
 import br.ufsc.src.control.dataclean.TrajBroke;
 import br.ufsc.src.control.exception.BrokeTrajectoryException;
 import br.ufsc.src.persistencia.InterfacePersistencia;
@@ -32,8 +33,7 @@ public class ServiceControl {
 	
 	public ServiceControl(InterfacePersistencia persistencia){
 		this.persistencia = persistencia;
-		
-
+		this.persistencia = new Persistencia("org.postgresql.Driver", "jdbc:postgresql://localhost/", "greece_trucks", "rogerjames", "raisa");
 	}
 	
 	public boolean testarBanco(String drive, String url, String usuario, String senha, String banco){
@@ -57,7 +57,7 @@ public class ServiceControl {
 		}
 	}
 
-	public void carregaArquivo(TrajetoriaBruta tb, Diretorio dir) throws TimeStampException, LoadDataFileException, GetSequenceException, CreateSequenceException, UpdateGeomException, CreateStatementException, AddBatchException, FileNFoundException, ExecuteBatchException, DBConnectionException {
+	public void loadData(TrajetoriaBruta tb, Diretorio dir) throws TimeStampException, LoadDataFileException, GetSequenceException, CreateSequenceException, UpdateGeomException, CreateStatementException, AddBatchException, FileNFoundException, ExecuteBatchException, DBConnectionException {
 		persistencia.carregaArquivo(dir, tb);
 	}
 	
@@ -69,7 +69,7 @@ public class ServiceControl {
 			return persistencia.getTableColumns(tableName);
 	}
 
-	public void brokeTraj(ConfigTrajBroke configTrajBroke) throws DBConnectionException, AddColumnException, SQLException, BrokeTrajectoryException {
+	public void brokeTraj(ConfigTraj configTrajBroke) throws DBConnectionException, AddColumnException, SQLException, BrokeTrajectoryException {
 		TrajBroke trajBroke = new TrajBroke(persistencia, configTrajBroke);
 		persistencia.addColumn(configTrajBroke.getTableNameOrigin(), "old_tid", "numeric");
 		persistencia.createIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("gid"), "btree");
@@ -122,7 +122,7 @@ public class ServiceControl {
 		persistencia.dropIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("gid"));
 	}
 
-	private void cleanColumns(ConfigTrajBroke configTrajBroke) throws SQLException, DBConnectionException {
+	private void cleanColumns(ConfigTraj configTrajBroke) throws SQLException, DBConnectionException {
 		double accuracy = 0.0;
 		double speed = 0.0;
 		if(configTrajBroke.getAccuracy() != null){
@@ -133,6 +133,23 @@ public class ServiceControl {
 			speed = Double.parseDouble(configTrajBroke.getSpeed());
 			persistencia.deletePointWhere(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("SPEED"), ">=", speed);
 		}	
+	}
+
+	public void removeNoise(ConfigTraj configTraj) {
+		double speed = Double.parseDouble(configTraj.getSpeed());
+		Set<Integer> tids = null;
+		RemoveNoise removeNoise = new RemoveNoise(persistencia, configTraj);
+		try {
+			tids = persistencia.fetchTIDS(configTraj.getColumnName("TID"), configTraj.getTableNameOrigin());
+			System.out.println("controle");
+			removeNoise.findRemoveNoise(tids, speed);
+		} catch (DBConnectionException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+		
 	}
 	
 }

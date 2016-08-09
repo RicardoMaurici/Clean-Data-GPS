@@ -61,110 +61,57 @@ import br.ufsc.src.persistencia.fonte.Diretorio;
 import br.ufsc.src.persistencia.fonte.TrajetoriaBruta;
 
 
-public class LoadPanelDSV extends AbstractPanel {
+public class LoadPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel diretorioLabel, igLinhaLabel, separadorLabel,
-			formatoDataLabel, formatoHoraLabel, igArqLabel, extLabel,
-			igDirLabel, sridAtualLabel, sridNovoLabel, tabelaLabel;
-	private JTextField diretorioTf, igLinhaTf, separadorTf, formatoDataTf,
-			igArqTf, igDirTf, extTf, formatoHoraTf, tabelaBancoTf, sridAtualTf,
-			sridNovoTf, novaColunaTf, posicaoTf, typeSizeTf ;
-	private JButton diretorioBtn, addColunaBtn;
+	private JLabel diretorioLabel, igArqLabel, extLabel, igDirLabel, sridAtualLabel, sridNovoLabel, tabelaLabel;
+	private JTextField diretorioTf, igArqTf, igDirTf, extTf, tabelaBancoTf, sridAtualTf, sridNovoTf ;
+	private JButton diretorioBtn;
 	private JCheckBox incluirMetadados, igExt, tid, gid;
-	private JTable table1;
-	private JScrollPane table;
-	private JComboBox tiposCb;
 	
-	public LoadPanelDSV(ServiceControl controle) {
-		super("Load DSV files", controle, new JButton("Load"));
+	public LoadPanel(ServiceControl controle) {
+		super("Load JSON/GPX/KML/WKT files", controle, new JButton("Load"));
 		defineComponents();
 		adjustComponents();
 	}
 
 	public void defineComponents() {
-		diretorioLabel = new JLabel("Local");
-		igLinhaLabel = new JLabel("Num lines ig");
-		separadorLabel = new JLabel("Separador");
-		formatoDataLabel = new JLabel("Formato data");
-		formatoHoraLabel = new JLabel("Formato hora");
-		sridAtualLabel = new JLabel("SRID atual");
-		sridNovoLabel = new JLabel("SRID novo");
-		tabelaLabel = new JLabel("Tabela");
-		igArqLabel = new JLabel("Ig. Arq.");
+		diretorioLabel = new JLabel("Dir/File");
+		sridAtualLabel = new JLabel("SRID");
+		sridNovoLabel = new JLabel("new SRID");
+		tabelaLabel = new JLabel("Table name");
+		igArqLabel = new JLabel("Ig. Files");
 		extLabel = new JLabel("Ext.");
 		igDirLabel = new JLabel("Ig. dir.");
 
 		diretorioTf = new JTextField();
-		igLinhaTf = new JTextField();
-		igLinhaTf.setSize(getMinimumSize());
-		separadorTf = new JTextField();
-		separadorTf.setSize(getMinimumSize());
-		formatoDataTf = new JTextField();
-		formatoHoraTf = new JTextField();
 		tabelaBancoTf = new JTextField();
 		sridAtualTf = new JTextField();
 		sridNovoTf = new JTextField();
 		igArqTf = new JTextField();
 		igDirTf = new JTextField();
 		extTf = new JTextField();
-		novaColunaTf = new JTextField();
-		posicaoTf = new JTextField();
-		typeSizeTf = new JTextField();
 		
 		diretorioBtn = new JButton("Select");
-		addColunaBtn = new JButton("Add line");
 
-		PromptSupport.setPrompt("Nome coluna", novaColunaTf);
-		PromptSupport.setPrompt("Pos. arquivo", posicaoTf);
-		PromptSupport.setPrompt("Size", typeSizeTf);
-		typeSizeTf.setHorizontalAlignment(JLabel.CENTER);
-
-		tiposCb = new JComboBox<>(getTypes());
-		tiposCb.setRenderer(new MyComboBoxRenderer("TYPE"));
-		tiposCb.setSelectedIndex(-1);
-		((JLabel)tiposCb.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-		incluirMetadados = new JCheckBox("Incluir Metadados");
-		igExt = new JCheckBox("Ignorar");
-		tid = new JCheckBox("Auto gerar Tid");
-		gid = new JCheckBox("Auto gerar Gid");
-		
-		
-		
-		Object [] columnNames = new Object[]{ "Column", "Pos.", "Type", "Size" };
-        Object [][] data        = new Object[][]{ {"date",     "", EnumTypes.CHARACTERVARYING.toString(),""} //TODO testes
-        											, {"time", "", EnumTypes.CHARACTERVARYING.toString(),""}
-        											, {"lat",  "", EnumTypes.NUMERIC.toString(),""}
-        											, {"lon",  "", EnumTypes.NUMERIC.toString(), ""}
-        											, {"timestamp", "", EnumTypes.TIMESTAMP.toString(), ""}
-        											, {"geom", "", EnumTypes.POINT.toString(), ""} 
-        										};
-        
-        DefaultTableModel tab = new MyTableModel( data,columnNames, true );
-        table1 = new JTable(tab);
-        table = new JScrollPane(table1);
-        table1.setRowHeight( 25 );
-        setUpColumnComboBox(table1, table1.getColumnModel().getColumn(2));
-		
-
+		incluirMetadados = new JCheckBox("Add Metadata");
+		igExt = new JCheckBox("Ignore");
+		tid = new JCheckBox("Generate TID");
+		gid = new JCheckBox("Generate GID");
 		
 		extTf.setText("pdf,zip");
 		igExt.setSelected(true);
 
-		addColunaBtn.addActionListener(this);
 		diretorioBtn.addActionListener(this);
 
 		processButton.setBackground(Color.DARK_GRAY);
 		diretorioBtn
-				.setToolTipText("Clique para selecionar o diretório/arquivo");
-		processButton.setToolTipText("Clique para carregar");
+				.setToolTipText("Click to select a directory/file");
+		processButton.setToolTipText("Click to load");
 		
-		igLinhaTf.setText("1");
-		separadorTf.setText(",");
-		diretorioTf.setText("/Users/rogerjames/Desktop/trucks_rev_pos_teste.txt");
+		diretorioTf.setText("/Users/rogerjames/Desktop/testes/");
 		sridAtualTf.setText("2100");
 		sridNovoTf.setText("900913");
-		formatoDataTf.setText("yyyy-MM-dd HH:mm:ss");
 	}
 
 	public void adjustComponents() {
@@ -185,11 +132,7 @@ public class LoadPanelDSV extends AbstractPanel {
 										layout.createSequentialGroup()
 												.addGroup(
 														layout.createParallelGroup(
-																LEADING)
-																.addComponent(
-																		igLinhaLabel)
-																.addComponent(
-																		formatoDataLabel)																
+																LEADING)													
 																.addComponent(
 																		sridAtualLabel)
 																.addComponent(
@@ -197,15 +140,10 @@ public class LoadPanelDSV extends AbstractPanel {
 																.addComponent(
 																		igDirLabel)
 																.addComponent(
-																		tabelaLabel)
-																.addComponent(novaColunaTf))
+																		tabelaLabel))
 												.addGroup(
 														layout.createParallelGroup(
 																LEADING)
-																.addComponent(
-																		igLinhaTf)
-																.addComponent(
-																		formatoDataTf)
 																.addComponent(
 																		sridAtualTf)
 																.addComponent(
@@ -214,15 +152,10 @@ public class LoadPanelDSV extends AbstractPanel {
 																		igDirTf)
 																.addComponent(
 																		tabelaBancoTf)
-																.addComponent(gid)
-																.addComponent(posicaoTf))
+																.addComponent(gid))
 												.addGroup(
 														layout.createParallelGroup(
 																LEADING)
-																.addComponent(
-																		separadorLabel)
-																.addComponent(
-																		formatoHoraLabel)
 																.addComponent(
 																		sridNovoLabel)
 																.addComponent(
@@ -230,31 +163,22 @@ public class LoadPanelDSV extends AbstractPanel {
 																.addComponent(
 																		igArqLabel)
 																.addComponent(
-																		incluirMetadados)
-																.addComponent(tiposCb))
+																		incluirMetadados))
 												.addGroup(
 														layout.createParallelGroup(
 																LEADING)
 																.addComponent(
-																		separadorTf)
-																.addComponent(
-																		formatoHoraTf)
-																.addComponent(
 																		sridNovoTf)
 																.addComponent(
 																		igArqTf)
-																.addComponent(tid)
-																.addComponent(typeSizeTf)
+																.addComponent(tid))
 																)
-																)
-									.addComponent(table)
 						)
 						
 				.addGroup(
 						layout.createParallelGroup(LEADING)
 								.addComponent(diretorioBtn)
-								.addComponent(processButton)
-								.addComponent(addColunaBtn)));
+								.addComponent(processButton)));
 
 		layout.linkSize(SwingConstants.HORIZONTAL, processButton, diretorioBtn);
 
@@ -268,29 +192,7 @@ public class LoadPanelDSV extends AbstractPanel {
 				.addGroup(
 						layout.createParallelGroup(LEADING)
 								.addGroup(
-										layout.createSequentialGroup()
-												.addGroup(
-														layout.createParallelGroup(
-																BASELINE)
-																.addComponent(
-																		igLinhaLabel)
-																.addComponent(
-																		igLinhaTf)
-																.addComponent(
-																		separadorLabel)
-																.addComponent(
-																		separadorTf))
-												.addGroup(
-														layout.createParallelGroup(
-																BASELINE)
-																.addComponent(
-																		formatoDataLabel)
-																.addComponent(
-																		formatoDataTf)
-																.addComponent(
-																		formatoHoraLabel)
-																.addComponent(
-																		formatoHoraTf))												
+										layout.createSequentialGroup()								
 												.addGroup(
 														layout.createParallelGroup(
 																BASELINE)
@@ -336,15 +238,6 @@ public class LoadPanelDSV extends AbstractPanel {
 																.addComponent(tid))
 												)
 								.addComponent(processButton))
-							.addGroup(layout.createParallelGroup(BASELINE)
-												.addComponent(table))
-							.addGroup(layout.createParallelGroup(BASELINE)
-												.addComponent(novaColunaTf)
-												.addComponent(posicaoTf)
-												.addComponent(tiposCb)
-												.addComponent(typeSizeTf)
-												.addComponent(addColunaBtn))
-				
 				);
 	}
 
@@ -356,69 +249,6 @@ public class LoadPanelDSV extends AbstractPanel {
 			int returnVal = fc.showOpenDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 				diretorioTf.setText(fc.getSelectedFile().getAbsolutePath());
-		}else if(e.getSource() == addColunaBtn){
-			if(novaColunaTf.getText().length() == 0){
-				JOptionPane.showMessageDialog(null,
-						"Column name is empty",
-						"Carregar documento", JOptionPane.ERROR_MESSAGE);
-				novaColunaTf.requestFocus(true);
-				return;
-			}
-			int inColPos, inTypeSize;
-			try{
-				inColPos = Integer.parseInt(posicaoTf.getText()); 
-			}catch(NumberFormatException ex){
-				JOptionPane.showMessageDialog(null,
-						"Not a number",
-						"Carregar documento", JOptionPane.ERROR_MESSAGE);
-				posicaoTf.requestFocus(true);
-				return;
-			}
-			
-			if((String)tiposCb.getSelectedItem() == null){
-				JOptionPane.showMessageDialog(null,
-						"Choose a type",
-						"Carregar documento", JOptionPane.ERROR_MESSAGE);
-				tiposCb.requestFocus(true);
-				return;
-			}
-
-			try{
-				if(typeSizeTf.getText().length() > 0){
-					inTypeSize = Integer.parseInt(typeSizeTf.getText());
-					if(!(inTypeSize > 0) ){
-						JOptionPane.showMessageDialog(null,
-								"Number should be greater than 0",
-								"Carregar documento", JOptionPane.ERROR_MESSAGE);
-						typeSizeTf.requestFocus(true);
-						return;
-					}
-				}
-				
-			}catch(NumberFormatException ex){
-				JOptionPane.showMessageDialog(null,
-						"Not a number",
-						"Carregar documento", JOptionPane.ERROR_MESSAGE);
-				typeSizeTf.requestFocus(true);
-				return;
-			}
-			
-				
-			DefaultTableModel model = (DefaultTableModel) table1.getModel();
-			model.addRow(new Object[]{novaColunaTf.getText()
-										,posicaoTf.getText()
-										,(String)tiposCb.getSelectedItem()
-										,typeSizeTf.getText()});
-			
-			DefaultComboBoxModel model1 = new DefaultComboBoxModel( getTypes() );
-			tiposCb.setModel( model1 );
-			tiposCb.setRenderer(new MyComboBoxRenderer("TYPE"));
-			tiposCb.setSelectedIndex(-1);
-			((JLabel)tiposCb.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-			novaColunaTf.setText("");
-			posicaoTf.setText("");
-			typeSizeTf.setText("");
-		
 		}else if (e.getSource() == processButton) {
 			if (!control.testConnection())
 				JOptionPane.showMessageDialog(null, "PAUUUU",
@@ -426,15 +256,10 @@ public class LoadPanelDSV extends AbstractPanel {
 			else {	
 				if (verificaEntradas()) {
 					String inLocal = diretorioTf.getText();
-					int inNlinhaig = Integer.parseInt(igLinhaTf.getText());
-					String inSeparador = separadorTf.getText();
-					String inFormatoDate = formatoDataTf.getText();
-					String inFormatoTime = formatoHoraTf.getText();
 					String inTabela = tabelaBancoTf.getText();
 					boolean inMetadata = incluirMetadados.isSelected();
 					boolean inGID = gid.isSelected();
 					boolean inTID = tid.isSelected();
-					Object[][] inTableData = getTableData(table1);
 					int inSRIDAtual, inSRIDNovo = 0;
 					try{
 						inSRIDAtual = Integer.parseInt(sridAtualTf.getText());
@@ -462,12 +287,20 @@ public class LoadPanelDSV extends AbstractPanel {
 					boolean inIgExt = igExt.isSelected();
 					String inIgDir = (igDirTf.getText().length() > 0) ? igDirTf.getText() : null;
 					String inIgArq = (igArqTf.getText().length() > 0) ? igArqTf.getText() : null;
-
-					TrajetoriaBruta tb = new TrajetoriaBruta(inNlinhaig, inSeparador, inFormatoDate, inFormatoTime, inTabela, inSRIDAtual, inSRIDNovo, inMetadata, inTableData, inGID, inTID);
-					Diretorio dir = definicoesDiretorio(inLocal, inExt, inIgExt, inIgDir, inIgArq);
 					
+					Object [][] tableColumns        = new Object[][]{
+						{"tid",  "", EnumTypes.NUMERIC.toString(),""}
+						, {"lat",  "", EnumTypes.NUMERIC.toString(),""}
+						, {"lon",  "", EnumTypes.NUMERIC.toString(), ""}
+						, {"timestamp", "", EnumTypes.TIMESTAMP.toString(), ""}
+						, {"geom", "", EnumTypes.POINT.toString(), ""} 
+					};
+
+					TrajetoriaBruta tb = new TrajetoriaBruta(0, null, null, null, inTabela, inSRIDAtual, inSRIDNovo, inMetadata, tableColumns, inGID, inTID);
+					Diretorio dir = definicoesDiretorio(inLocal, inExt, inIgExt, inIgDir, inIgArq);
+				
 					try {
-						control.createTable(tb);
+						control.createTable(tb); 
 					} catch (SyntaxException e1){
 						JOptionPane.showMessageDialog(null,e1.getMsg(),"Loading data", JOptionPane.ERROR_MESSAGE);
 						tabelaBancoTf.requestFocus(true);
@@ -548,28 +381,6 @@ public class LoadPanelDSV extends AbstractPanel {
 					"Carregar documento", JOptionPane.ERROR_MESSAGE);
 			diretorioTf.requestFocus(true);
 			return false;
-		} else if (igLinhaTf.getText().length() == 0) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Informe o n�mero de linhas a ser ignorados no inicio do arquivo",
-							"Carregar documento", JOptionPane.ERROR_MESSAGE);
-			igLinhaTf.requestFocus(true);
-			return false;
-		} else if (separadorTf.getText().length() == 0) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Informe o caracter que separa as colunas no arquivo a ser carregado",
-							"Carregar documento", JOptionPane.ERROR_MESSAGE);
-			separadorTf.requestFocus(true);
-			return false;
-		} else if (formatoDataTf.getText().length() == 0 && formatoHoraTf.getText().length() != 0) {
-			JOptionPane.showMessageDialog(null,
-					"Informe o formato da data no arquivo a ser carregado",
-					"Carregar documento", JOptionPane.ERROR_MESSAGE);
-			formatoDataTf.requestFocus(true);
-			return false;
 		}else if (tabelaBancoTf.getText().length() == 0) {
 			JOptionPane
 					.showMessageDialog(
@@ -587,62 +398,4 @@ public class LoadPanelDSV extends AbstractPanel {
 		}
 		return true;
 	}
-	
-	 public void setUpColumnComboBox(JTable table, TableColumn column) {
-		//Set up the editor for the sport cells.
-		JComboBox comboBox = new JComboBox(getTypes());
-		column.setCellEditor(new DefaultCellEditor(comboBox));
-		//Set up tool tips for the cells.
-		DefaultTableCellRenderer renderer =
-		new DefaultTableCellRenderer();
-		renderer.setToolTipText("Click for combo box");
-		column.setCellRenderer(renderer);
-	}
-	 
-	public String[] getTypes(){
-		String[] types = new String[] {
-				EnumTypes.VARCHAR.toString()
-				,EnumTypes.INTEGER.toString() 			 	
-			 	,EnumTypes.SMALLINT.toString()
-			 	,EnumTypes.SERIAL.toString()
-			 	,EnumTypes.DECIMAL.toString()
-			 	,EnumTypes.NUMERIC.toString()
-			 	,EnumTypes.REAL.toString()
-			 	,EnumTypes.CHARACTERVARYING.toString()
-			 	,EnumTypes.TIMESTAMP.toString()
-			 	,EnumTypes.POINT.toString()
-		};
-		return types;
-	}
-	
-	public Object[][] getTableData (JTable table) {
-	    DefaultTableModel dtm = (DefaultTableModel) table.getModel();
-	    int nRow = dtm.getRowCount(), nCol = dtm.getColumnCount();
-	    Object[][] tableData = new Object[nRow][nCol];
-	    for (int i = 0 ; i < nRow ; i++)
-	        for (int j = 0 ; j < nCol ; j++)
-	            tableData[i][j] = dtm.getValueAt(i,j);
-	    return tableData;
-	}
-
-	 class MyComboBoxRenderer extends JLabel implements ListCellRenderer
-	    {
-	        private String _title;
-
-	        public MyComboBoxRenderer(String title)
-	        {
-	            _title = title;
-	        }
-
-	     
-	        public Component getListCellRendererComponent(JList list, Object value,
-	                int index, boolean isSelected, boolean hasFocus)
-	        {
-	            if (index == -1 && value == null) setText(_title);
-	            else setText(value.toString());
-	            return this;
-	        }
-
-	    }
-	 
 }
