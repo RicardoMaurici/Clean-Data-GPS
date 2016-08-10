@@ -30,19 +30,19 @@ import br.ufsc.src.persistencia.exception.AddColumnException;
 import br.ufsc.src.persistencia.exception.DBConnectionException;
 import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 
-public class BrokeTrajectory extends AbstractPanel{
+public class RemoveNoisePanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel tableLabel, sampleTimeLabel, speedLabel, accuracyLabel, distanceLabel;
-	private JTextField tableTF, sampleTimeTF, speedTF, accuracyTF, distanceTF;
+	private JLabel tableLabel, speedLabel;
+	private JTextField tableTF, speedTF;
 	private JButton tableBtn;
 	private JTable table1;
 	private JScrollPane table;
-	private JCheckBox booleanStatusCB;
+	private JCheckBox fromFirst, fromSecondLookingBackward ;
 
-	public BrokeTrajectory(ServiceControl controle) {
+	public RemoveNoisePanel(ServiceControl controle) {
 		
-		super("Data Clean - Broke Trajectory", controle, new JButton("Start"));
+		super("Data Clean - Remove Noise", controle, new JButton("Start"));
 		defineComponents();
 		adjustComponents();
 	}
@@ -57,20 +57,11 @@ public class BrokeTrajectory extends AbstractPanel{
 		tableBtn = new JButton("Find");
 		tableBtn.addActionListener(this);
 		
-		sampleTimeLabel = new JLabel("Sample interval");
-		sampleTimeTF = new JTextField();
-		sampleTimeTF.setToolTipText("Set sample time interval in seconds");
+		fromFirst = new JCheckBox("From First Looking Forward");
+		fromSecondLookingBackward = new JCheckBox("From Second Looking Backward");
 		
-		booleanStatusCB = new JCheckBox("Broke by status boolean");
-		
-		accuracyLabel = new JLabel("Accuracy");
-		accuracyTF = new JTextField();
-		speedLabel = new JLabel("Delete speed up");
+		speedLabel = new JLabel("Ignore speed up in m/s");
 		speedTF = new JTextField();
-		
-		distanceLabel = new JLabel("Max Distance");
-		distanceTF = new  JTextField();
-		distanceTF.setToolTipText("Set, in meters, max distance between two points");
 		
 		Object [] columnNames = new Object[]{ "Column", "Kind" };
         Object [][] data        = new Object[][]{};
@@ -80,7 +71,6 @@ public class BrokeTrajectory extends AbstractPanel{
         table = new JScrollPane(table1);
         table1.setRowHeight( 25 );
         setUpColumnComboBox(table1, table1.getColumnModel().getColumn(1));
-        
 	}
 	
 	@Override
@@ -100,25 +90,15 @@ public class BrokeTrajectory extends AbstractPanel{
 						.addComponent(table)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(accuracyLabel)
 										.addComponent(speedLabel)
 								)
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(accuracyTF)
 										.addComponent(speedTF)
 								)
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(sampleTimeLabel)
-										.addComponent(distanceLabel)
-								)
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(sampleTimeTF)
-										.addComponent(distanceTF)
-								)
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(booleanStatusCB)
-								)
-								
+										.addComponent(fromFirst)
+										.addComponent(fromSecondLookingBackward)
+								)		
 						)
 				)
 				.addGroup(layout.createParallelGroup(LEADING)
@@ -138,20 +118,13 @@ public class BrokeTrajectory extends AbstractPanel{
 						.addComponent(table))
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addGroup(layout.createParallelGroup()
-								.addComponent(accuracyLabel)
-								.addComponent(accuracyTF)
-								.addComponent(sampleTimeLabel)
-								.addComponent(sampleTimeTF)
-								.addComponent(booleanStatusCB)
+								.addComponent(speedLabel)
+								.addComponent(speedTF)
+								.addComponent(fromFirst)	
 						)
 				)
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addGroup(layout.createParallelGroup()
-								.addComponent(speedLabel)
-								.addComponent(speedTF)
-								.addComponent(distanceLabel)
-								.addComponent(distanceTF)
-						)
+						.addComponent(fromSecondLookingBackward)
 				)
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(processButton))
@@ -180,29 +153,20 @@ public class BrokeTrajectory extends AbstractPanel{
 				return;
 			}
 		}else if(e.getSource() == processButton){
-			ConfigTraj configTrajBroke = getDataFromWindow();
-			if(configTrajBroke != null){
+			ConfigTraj configTraj = getDataFromWindow();
+			if(configTraj != null){
 				try {
 					long startTime = System.currentTimeMillis();
-					control.brokeTraj(configTrajBroke);   
+					control.removeNoise(configTraj);   
 					long endTime   = System.currentTimeMillis();
 					long totalTime = endTime - startTime;
-					JOptionPane.showMessageDialog(null, "Broken Trajectories \n"+Utils.getDurationBreakdown(totalTime),
+					JOptionPane.showMessageDialog(null, "Remove Noise \n"+Utils.getDurationBreakdown(totalTime),
 							"Data Clean",
 							JOptionPane.INFORMATION_MESSAGE);
-				} catch (DBConnectionException e1) {
-					JOptionPane.showMessageDialog(null, "DB connection error: "+e1.getMsg(),
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "DB connection error: "+e1.getMessage(),
 							"Data Clean", JOptionPane.ERROR_MESSAGE);
-				} catch (AddColumnException e1) {
-					JOptionPane.showMessageDialog(null, "Error adding column: "+e1.getMsg(),
-							"Data Clean", JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "DB error: "+e1.getMessage(),
-							"Data Clean", JOptionPane.ERROR_MESSAGE);
-				} catch (BrokeTrajectoryException e1) {
-					JOptionPane.showMessageDialog(null, "Error breaking trajectories: "+e1.getMsg(),
-							"Data Clean", JOptionPane.ERROR_MESSAGE);
-				}
+				} 
 				clearWindow();
 			}
 		}
@@ -221,56 +185,41 @@ public class BrokeTrajectory extends AbstractPanel{
 			tableBtn.requestFocus(true);
 			return null;
 	 	}
-		if(Utils.isStringEmpty(sampleTimeTF.getText()) && !booleanStatusCB.isSelected() && Utils.isStringEmpty(distanceTF.getText())){
-			JOptionPane.showMessageDialog(null,"You should choice a method to broke trajectories, \n by sample interval, max distance or status boolean","Data Clean", JOptionPane.ERROR_MESSAGE);
-			sampleTimeTF.requestFocus(true);
-			return null;
-		}
-		if(!Utils.isStringEmpty(sampleTimeTF.getText()) && !Utils.isNumeric(sampleTimeTF.getText())){
-			JOptionPane.showMessageDialog(null,"Sample interval should be a number in seconds","Data Clean", JOptionPane.ERROR_MESSAGE);
-			sampleTimeTF.requestFocus(true);
-			return null;
-		}
-		if(!Utils.isStringEmpty(accuracyTF.getText()) && !Utils.isNumeric(accuracyTF.getText())){
-			JOptionPane.showMessageDialog(null,"Accuracy should be a number","Data Clean", JOptionPane.ERROR_MESSAGE);
-			accuracyTF.requestFocus(true);
-			return null;
-		}
+	
 		if(!Utils.isStringEmpty(speedTF.getText()) && !Utils.isNumeric(speedTF.getText())){
-			JOptionPane.showMessageDialog(null,"Accuracy should be a number","Data Clean", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,"Speed should be a number","Data Clean", JOptionPane.ERROR_MESSAGE);
 			speedTF.requestFocus(true);
 			return null;
 		}
-		if(!Utils.isStringEmpty(distanceTF.getText()) && !Utils.isNumeric(distanceTF.getText())){
-			JOptionPane.showMessageDialog(null,"Max distance should be a number in meters","Data Clean", JOptionPane.ERROR_MESSAGE);
-			distanceTF.requestFocus(true);
+		
+		if(Utils.isStringEmpty(speedTF.getText())){
+			JOptionPane.showMessageDialog(null,"You should set a speed value","Data Clean", JOptionPane.ERROR_MESSAGE);
+			speedTF.requestFocus(true);
+			return null;
+		}
+		
+		if(fromFirst.isSelected() && fromSecondLookingBackward.isSelected()){
+			JOptionPane.showMessageDialog(null,"Choice only one method to remove noise","Data Clean", JOptionPane.ERROR_MESSAGE);
+			fromFirst.requestFocus(true);
+			return null;
+		}
+		
+		if(!fromFirst.isSelected() && !fromSecondLookingBackward.isSelected()){
+			JOptionPane.showMessageDialog(null,"You should select a method to remove noise","Data Clean", JOptionPane.ERROR_MESSAGE);
+			fromFirst.requestFocus(true);
 			return null;
 		}
 		
 		String tableName = tableTF.getText();
 
-		String accuracy = Utils.isNumeric(accuracyTF.getText()) ? accuracyTF.getText() : null;
 		String speed = Utils.isNumeric(speedTF.getText()) ? speedTF.getText() : null;
-		int sample = 0;
-		double distance = 0;
-		boolean status = booleanStatusCB.isSelected();
 		
-		try{
-			sample = Integer.parseInt(sampleTimeTF.getText());
-		}catch(Exception e){
-			sample = 0;
-		}try{
-			distance = Double.parseDouble(distanceTF.getText());
-		}catch(Exception e){
-			distance = 0;
-		}
+		ConfigTraj configTraj= new ConfigTraj(tableData, tableName);
+		configTraj.setRemoveNoiseFromFirst(fromFirst.isSelected());
+		configTraj.setRemoveNoiseFromSecond(fromSecondLookingBackward.isSelected());
+		configTraj.setSpeed(speed);
 		
-		ConfigTraj configTrajBroke = new ConfigTraj(tableData, tableName, sample, distance, status);
-		configTrajBroke.setAccuracy(accuracy);
-		configTrajBroke.setSample(sample);
-		configTrajBroke.setSpeed(speed);
-		
-		return configTrajBroke;
+		return configTraj;
 	}
 	 
 	private Object[][] getTableData () {

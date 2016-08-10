@@ -99,7 +99,7 @@ public class LoadPanel extends AbstractPanel {
 		tid = new JCheckBox("Generate TID");
 		gid = new JCheckBox("Generate GID");
 		
-		extTf.setText("pdf,zip");
+		extTf.setText("pdf,zip,txt,csv,tsv");
 		igExt.setSelected(true);
 
 		diretorioBtn.addActionListener(this);

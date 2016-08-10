@@ -148,7 +148,7 @@ public class LoadPanelDSV extends AbstractPanel {
 		
 
 		
-		extTf.setText("pdf,zip");
+		extTf.setText("pdf,zip,gpx,kml,wkt,json");
 		igExt.setSelected(true);
 
 		addColunaBtn.addActionListener(this);
