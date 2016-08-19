@@ -20,7 +20,6 @@ import br.ufsc.src.persistencia.exception.GetSequenceException;
 public class LoaderKML implements ILoader {
 
 	public void loadFile(File file, TrajetoriaBruta tb, int folder_id) throws DBConnectionException, CreateStatementException, GetSequenceException, AddBatchException, ExecuteBatchException {
-		System.out.println("LeitorKML " + Utils.getFileExtension(file));
 
 		final Kml kml = Kml.unmarshal(file);
 		final Placemark placemark = (Placemark) kml.getFeature();

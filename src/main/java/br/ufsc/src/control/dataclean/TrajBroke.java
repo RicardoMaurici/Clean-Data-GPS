@@ -14,10 +14,10 @@ import br.ufsc.src.persistencia.exception.GetSequenceException;
 
 public class TrajBroke {
 	
-	private ConfigTrajBroke configTrajBroke;
+	private ConfigTraj configTrajBroke;
 	private InterfacePersistencia persistencia;
 	
-	public TrajBroke (InterfacePersistencia persistencia, ConfigTrajBroke configTraj){
+	public TrajBroke (InterfacePersistencia persistencia, ConfigTraj configTraj){
 		this.configTrajBroke = configTraj;
 		this.persistencia = persistencia;
 	}
