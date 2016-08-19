@@ -21,7 +21,6 @@ import br.ufsc.src.persistencia.exception.TimeStampException;
 public class LoaderDSV implements ILoader {
 
 	public void loadFile(File file, TrajetoriaBruta tb, int folder_id) throws DBConnectionException, CreateStatementException, GetSequenceException, TimeStampException, AddBatchException, FileNFoundException, ExecuteBatchException {
-		System.out.println("LeitorDSV " + Utils.getFileExtension(file));
 		
 		DBConnectionProvider DB_CONN = DBConnectionProvider.getInstance();
 		Scanner scanner;
@@ -64,6 +63,7 @@ public class LoaderDSV implements ILoader {
 			throw new CreateStatementException(e1.getMessage());
 		}
 		int seq = 0;
+		int cont = 0;
 		if (tb.isTID())
 			seq = Persistencia.getSequence(tb.getTabelaBanco(), "tid");
 		try {
@@ -139,8 +139,17 @@ public class LoaderDSV implements ILoader {
 				sql += sql1 + ")";
 				try {
 					DB_CONN.addBatch(sql);
+					cont++;
 				} catch (SQLException e) {
 					throw new AddBatchException(e.getMessage());
+				}
+				if(cont == 200000){
+					try {
+						DB_CONN.executeBatch();
+					} catch (SQLException e) {
+						throw new ExecuteBatchException(e.getMessage());
+					}
+					cont = 0;
 				}
 
 			}
