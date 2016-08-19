@@ -1,6 +1,6 @@
 package br.ufsc.src.control.dataclean;
 
-public class ConfigTrajBroke {
+public class ConfigTraj {
 	private Object[][] tableData;
 	private String tableNameOrigin;
 	private String accuracy;
@@ -10,13 +10,20 @@ public class ConfigTrajBroke {
 	private String columnTID;
 
 	private boolean status;
+	private boolean removeNoiseFromFirst;
+	private boolean removeNoiseFromSecond;
 	
-	public ConfigTrajBroke(Object[][] tableData, String tableNameOrigin, int sample, double distanceMax, boolean status){
+	public ConfigTraj(Object[][] tableData, String tableNameOrigin, int sample, double distanceMax, boolean status){
 		this.tableData = tableData;
 		this.tableNameOrigin = tableNameOrigin;
 		this.sample = sample;
 		this.status = status;
 		this.distanceMax = distanceMax;
+	}
+	
+	public ConfigTraj(Object[][] tableData, String tableNameOrigin){
+		this.tableData = tableData;
+		this.tableNameOrigin = tableNameOrigin;
 	}
 
 	public Object[][] getTableData() {
@@ -92,4 +99,22 @@ public class ConfigTrajBroke {
 	public void setColumnTID(String columnTID) {
 		this.columnTID = columnTID;
 	}
+
+	public boolean isRemoveNoiseFromFirst() {
+		return removeNoiseFromFirst;
+	}
+
+	public void setRemoveNoiseFromFirst(boolean removeNoiseFromFirst) {
+		this.removeNoiseFromFirst = removeNoiseFromFirst;
+	}
+
+	public boolean isRemoveNoiseFromSecond() {
+		return removeNoiseFromSecond;
+	}
+
+	public void setRemoveNoiseFromSecond(boolean removeNoiseFromSecond) {
+		this.removeNoiseFromSecond = removeNoiseFromSecond;
+	}
+	
+	
 }

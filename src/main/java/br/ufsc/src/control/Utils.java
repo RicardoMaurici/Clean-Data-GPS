@@ -1,5 +1,6 @@
 package br.ufsc.src.control;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -85,6 +86,14 @@ public class Utils {
         return(sb.toString());
     }
 	
+	public static String getFileExtension(File file) {
+		String fileName = file.getName();
+		if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+			return fileName.substring(fileName.lastIndexOf(".") + 1);
+		else
+			return "";
+	}
+	
 	public static boolean isNumeric(String s) {  
 	    return s.matches("[-+]?\\d*\\.?\\d+");  
 	} 
@@ -94,13 +103,10 @@ public class Utils {
 	}
 	
 	public static double euclidean(Point p1,Point p2){
-		System.out.println("Euclidean");
 		double distX = Math.abs(p1.getX()-p2.getX());
 		double distXSquare = distX*distX;
-		
 		double distY = Math.abs(p1.getY()-p2.getY());
 		double distYSquare = distY*distY;
-		
 		return Math.sqrt(distXSquare+distYSquare);
 	}
 }

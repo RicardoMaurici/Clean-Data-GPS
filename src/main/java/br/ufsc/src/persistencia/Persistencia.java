@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.postgresql.util.PSQLException;
@@ -185,7 +186,6 @@ public class Persistencia implements InterfacePersistencia {
 	
 	private void loadFile(File file, TrajetoriaBruta tb, int folder_id) throws TimeStampException, GetSequenceException, CreateStatementException, AddBatchException, FileNFoundException, ExecuteBatchException, DBConnectionException{
 		ILoader leitor = null;
-		System.out.println(DB_CONN.toString());
 		switch (Utils.getFileExtension(file).toLowerCase()) {
 			case "kml":
 				leitor = new LoaderKML();
@@ -383,6 +383,17 @@ public class Persistencia implements InterfacePersistencia {
 	public void deletePointWhere(String tableName, String columnName, String operator, double condition) throws SQLException, DBConnectionException{
 		abraConexao();
 		DB_CONN.execute("DELETE FROM "+tableName+" WHERE "+ columnName + operator + condition +";");
+		fechaConexao();
+	}
+
+	public void deleteByGids(List<Integer> gids, String tableNameOrigin) throws DBConnectionException, SQLException {
+		String ids ="";
+		for (Integer gid : gids) {
+			ids += gid+",";
+		}
+		ids = ids.substring(0, ids.length()-1);
+		abraConexao();
+		DB_CONN.execute("DELETE FROM "+tableNameOrigin+" WHERE gid in ("+ ids +");");
 		fechaConexao();
 	}
 	

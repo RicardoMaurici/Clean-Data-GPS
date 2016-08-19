@@ -2,6 +2,7 @@ package br.ufsc.src.persistencia;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import br.ufsc.src.control.dataclean.ConfigTraj;
@@ -54,5 +55,7 @@ public interface InterfacePersistencia {
 	public void updateTID(String string) throws SQLException, DBConnectionException;
 	
 	public void deletePointWhere(String tableName, String columnName, String operator, double condition) throws SQLException, DBConnectionException;
+
+	public void deleteByGids(List<Integer> gids, String tableNameOrigin) throws DBConnectionException, SQLException;
 	
 }

@@ -57,6 +57,8 @@ public class RemoveNoisePanel extends AbstractPanel{
 		tableBtn = new JButton("Find");
 		tableBtn.addActionListener(this);
 		
+		tableTF.setText("traj_ricardo3");
+		
 		fromFirst = new JCheckBox("From First Looking Forward");
 		fromSecondLookingBackward = new JCheckBox("From Second Looking Backward");
 		

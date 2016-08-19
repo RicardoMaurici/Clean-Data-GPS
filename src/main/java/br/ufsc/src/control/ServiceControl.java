@@ -33,7 +33,7 @@ public class ServiceControl {
 	
 	public ServiceControl(InterfacePersistencia persistencia){
 		this.persistencia = persistencia;
-		this.persistencia = new Persistencia("org.postgresql.Driver", "jdbc:postgresql://localhost/", "greece_trucks", "rogerjames", "raisa");
+		this.persistencia = new Persistencia("org.postgresql.Driver", "jdbc:postgresql://localhost/", "greece_trucks", "rogerjames", "raisa"); //TODO remover
 	}
 	
 	public boolean testarBanco(String drive, String url, String usuario, String senha, String banco){
@@ -141,14 +141,12 @@ public class ServiceControl {
 		RemoveNoise removeNoise = new RemoveNoise(persistencia, configTraj);
 		try {
 			tids = persistencia.fetchTIDS(configTraj.getColumnName("TID"), configTraj.getTableNameOrigin());
-			System.out.println("controle");
 			removeNoise.findRemoveNoise(tids, speed);
 		} catch (DBConnectionException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	
 		
 	}
 	
