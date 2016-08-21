@@ -16,6 +16,7 @@ import br.ufsc.src.igu.panel.BrokeTrajectory;
 import br.ufsc.src.igu.panel.LoadPanelDSV;
 import br.ufsc.src.igu.panel.RemoveNoisePanel;
 import br.ufsc.src.igu.panel.ConnectionPanel;
+import br.ufsc.src.igu.panel.ExportTablePanel;
 import br.ufsc.src.igu.panel.LoadPanel;
 
 
@@ -77,6 +78,9 @@ public class MainWindow extends JFrame implements ActionListener {
 			break;
 		case OPTIONREMOVENOISE:
 			panel = new RemoveNoisePanel(control);
+			break;
+		case OPTIONEXPORTCSV:
+			panel = new ExportTablePanel(control);
 			break;
 		} 
 		setContentPane(panel);

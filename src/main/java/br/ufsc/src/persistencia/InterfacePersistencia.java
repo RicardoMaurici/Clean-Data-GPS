@@ -57,5 +57,7 @@ public interface InterfacePersistencia {
 	public void deletePointWhere(String tableName, String columnName, String operator, double condition) throws SQLException, DBConnectionException;
 
 	public void deleteByGids(List<Integer> gids, String tableNameOrigin) throws DBConnectionException, SQLException;
+
+	public void exportTable(String path, String table) throws DBConnectionException, SQLException;
 	
 }

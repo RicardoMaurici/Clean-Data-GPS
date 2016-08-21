@@ -149,5 +149,9 @@ public class ServiceControl {
 		}
 		
 	}
+
+	public void exportTable(String path, String table) throws DBConnectionException, SQLException {
+		persistencia.exportTable(path,table);
+	}
 	
 }

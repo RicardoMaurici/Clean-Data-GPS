@@ -397,4 +397,11 @@ public class Persistencia implements InterfacePersistencia {
 		fechaConexao();
 	}
 	
+	public void exportTable(String path, String table) throws DBConnectionException, SQLException {
+		String sql = "COPY "+table+" TO '"+path+"/"+table+".csv' DELIMITER ',' CSV HEADER;";
+		abraConexao();
+		DB_CONN.execute(sql);
+		fechaConexao();
+	}
+	
 }
