@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -15,9 +16,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -33,12 +37,14 @@ import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 public class RemoveNoisePanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel tableLabel, speedLabel;
-	private JTextField tableTF, speedTF;
+	private JLabel tableLabel, speedLabel, minPointsLabel, distancePointsLabel, dbscanLabel, meanFilterLabel, medianFilterLabel;
+	private JTextField tableTF, speedTF, minPointsTF, distancePointsTF;
 	private JButton tableBtn;
 	private JTable table1;
 	private JScrollPane table;
-	private JCheckBox fromFirst, fromSecondLookingBackward ;
+	private JRadioButton fromFirst, fromSecondLookingBackward, dbscanRB, meanFilterRB, medianFilterRB;
+	private JSeparator sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8, sep9;
+	
 
 	public RemoveNoisePanel(ServiceControl controle) {
 		
@@ -59,11 +65,33 @@ public class RemoveNoisePanel extends AbstractPanel{
 		
 		tableTF.setText("traj_ricardo3");
 		
-		fromFirst = new JCheckBox("From First Looking Forward");
-		fromSecondLookingBackward = new JCheckBox("From Second Looking Backward");
+		fromFirst = new JRadioButton("From First Looking Forward");
+		fromSecondLookingBackward = new JRadioButton("From Second Looking Backward");
+		dbscanRB = new JRadioButton("DBSCAN");
+		meanFilterRB = new JRadioButton("Mean Filter");
+		medianFilterRB = new JRadioButton("Median Filter");
+		ButtonGroup group = new ButtonGroup();
+		group.add(fromFirst);
+		group.add(fromSecondLookingBackward);
+		group.add(dbscanRB);
+		group.add(meanFilterRB);
+		group.add(medianFilterRB);
 		
 		speedLabel = new JLabel("Ignore speed up in m/s");
 		speedTF = new JTextField();
+		
+		dbscanLabel = new JLabel("-- DBSCAN --");
+		minPointsLabel = new JLabel("Min. Points");
+		minPointsTF = new JTextField();
+		minPointsTF.setToolTipText("Minimum points to DBSCAN");
+		distancePointsLabel = new JLabel("Dist. points");
+		distancePointsTF = new JTextField();
+		distancePointsTF.setToolTipText("Distance between points in meters");
+		
+		medianFilterLabel = new JLabel("-- Median Filter --");
+		
+		meanFilterLabel = new JLabel("-- Mean Filter --");
+		
 		
 		Object [] columnNames = new Object[]{ "Column", "Kind" };
         Object [][] data        = new Object[][]{};
@@ -73,6 +101,16 @@ public class RemoveNoisePanel extends AbstractPanel{
         table = new JScrollPane(table1);
         table1.setRowHeight( 25 );
         setUpColumnComboBox(table1, table1.getColumnModel().getColumn(1));
+        
+        sep1 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep2 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep3 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep4 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep5 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep6 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep7 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep8 = new JSeparator(SwingConstants.HORIZONTAL);
+		sep9 = new JSeparator(SwingConstants.HORIZONTAL);
 	}
 	
 	@Override
@@ -93,13 +131,32 @@ public class RemoveNoisePanel extends AbstractPanel{
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(speedLabel)
+										.addComponent(sep1)
+										.addComponent(dbscanLabel)
+										.addComponent(minPointsLabel)
+										.addComponent(distancePointsLabel)
+										.addComponent(sep4)
+										.addComponent(meanFilterLabel)
+										.addComponent(sep7)
+										.addComponent(medianFilterLabel)
 								)
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(speedTF)
+										.addComponent(sep2)
+										.addComponent(minPointsTF)
+										.addComponent(distancePointsTF)
+										.addComponent(sep5)
+										.addComponent(sep8)
 								)
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(fromFirst)
 										.addComponent(fromSecondLookingBackward)
+										.addComponent(sep3)
+										.addComponent(dbscanRB)
+										.addComponent(sep6)
+										.addComponent(meanFilterRB)
+										.addComponent(sep9)
+										.addComponent(medianFilterRB)
 								)		
 						)
 				)
@@ -127,7 +184,37 @@ public class RemoveNoisePanel extends AbstractPanel{
 				)
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(fromSecondLookingBackward)
+			
 				)
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(sep1)
+						.addComponent(sep2)
+						.addComponent(sep3))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(dbscanLabel))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(minPointsLabel)
+						.addComponent(minPointsTF)
+						.addComponent(dbscanRB))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(distancePointsLabel)
+						.addComponent(distancePointsTF))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(sep4)
+						.addComponent(sep5)
+						.addComponent(sep6))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(meanFilterLabel))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(meanFilterRB))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(sep7)
+						.addComponent(sep8)
+						.addComponent(sep9))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(medianFilterLabel))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(medianFilterRB))
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(processButton))
 		);
@@ -182,44 +269,61 @@ public class RemoveNoisePanel extends AbstractPanel{
 			tableTF.requestFocus(true);
 			return null;
 		}
+		
 		if(tableData.length == 0){
 			JOptionPane.showMessageDialog(null,"You should click Find to list the table's columns","Data Clean", JOptionPane.ERROR_MESSAGE);
 			tableBtn.requestFocus(true);
 			return null;
 	 	}
+		
+		if(!(fromFirst.isSelected() || fromSecondLookingBackward.isSelected() || dbscanRB.isSelected() || meanFilterRB.isSelected() || medianFilterRB.isSelected())){
+			JOptionPane.showMessageDialog(null,"A method should be selected","Data Clean", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 	
-		if(!Utils.isStringEmpty(speedTF.getText()) && !Utils.isNumeric(speedTF.getText())){
+		if((fromFirst.isSelected() || fromSecondLookingBackward.isSelected()) && !Utils.isStringEmpty(speedTF.getText()) && !Utils.isNumeric(speedTF.getText())){
 			JOptionPane.showMessageDialog(null,"Speed should be a number","Data Clean", JOptionPane.ERROR_MESSAGE);
+			speedTF.setText("");
 			speedTF.requestFocus(true);
 			return null;
 		}
 		
-		if(Utils.isStringEmpty(speedTF.getText())){
+		if((fromFirst.isSelected() || fromSecondLookingBackward.isSelected()) && Utils.isStringEmpty(speedTF.getText())){
 			JOptionPane.showMessageDialog(null,"You should set a speed value","Data Clean", JOptionPane.ERROR_MESSAGE);
 			speedTF.requestFocus(true);
 			return null;
 		}
 		
-		if(fromFirst.isSelected() && fromSecondLookingBackward.isSelected()){
-			JOptionPane.showMessageDialog(null,"Choice only one method to remove noise","Data Clean", JOptionPane.ERROR_MESSAGE);
-			fromFirst.requestFocus(true);
+		if(dbscanRB.isSelected() && (Utils.isStringEmpty(minPointsTF.getText()) || !Utils.isNumeric(minPointsTF.getText()))){
+			JOptionPane.showMessageDialog(null,"You should set a NUMBER to minimum value of points","Data Clean", JOptionPane.ERROR_MESSAGE);
+			minPointsTF.setText("");
+			minPointsTF.requestFocus(true);
 			return null;
 		}
 		
-		if(!fromFirst.isSelected() && !fromSecondLookingBackward.isSelected()){
-			JOptionPane.showMessageDialog(null,"You should select a method to remove noise","Data Clean", JOptionPane.ERROR_MESSAGE);
-			fromFirst.requestFocus(true);
+		if(dbscanRB.isSelected() && (Utils.isStringEmpty(distancePointsTF.getText()) || !Utils.isNumeric(distancePointsTF.getText()))){
+			JOptionPane.showMessageDialog(null,"You should set a NUMBER to distance between points","Data Clean", JOptionPane.ERROR_MESSAGE);
+			distancePointsTF.setText("");
+			distancePointsTF.requestFocus(true);
 			return null;
 		}
 		
 		String tableName = tableTF.getText();
 
 		String speed = Utils.isNumeric(speedTF.getText()) ? speedTF.getText() : null;
+		int minPoints = Utils.isNumeric(minPointsTF.getText()) ? Integer.parseInt(minPointsTF.getText()) : null;
+		double distPoints = Utils.isNumeric(distancePointsTF.getText()) ? Double.parseDouble(distancePointsTF.getText()) : null;
 		
 		ConfigTraj configTraj= new ConfigTraj(tableData, tableName);
 		configTraj.setRemoveNoiseFromFirst(fromFirst.isSelected());
 		configTraj.setRemoveNoiseFromSecond(fromSecondLookingBackward.isSelected());
+		configTraj.setDbscan(dbscanRB.isSelected());
+		configTraj.setMeanFilter(meanFilterRB.isSelected());
+		configTraj.setMedianFilter(medianFilterRB.isSelected());
+		
 		configTraj.setSpeed(speed);
+		configTraj.setMinPoints(minPoints);
+		configTraj.setDistancePoints(distPoints);
 		
 		return configTraj;
 	}

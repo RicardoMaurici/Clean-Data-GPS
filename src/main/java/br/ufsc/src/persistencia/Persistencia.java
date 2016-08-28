@@ -347,14 +347,14 @@ public class Persistencia implements InterfacePersistencia {
 		
 	}
 
-	public Trajectory fetchTrajectory(Integer tid, ConfigTraj configTrajBroke, String columnTID) throws DBConnectionException, SQLException {
-		String sql = "SELECT "+configTrajBroke.getColumnName("GID")+" as gid,"+
+	public Trajectory fetchTrajectory(Integer tid, ConfigTraj configTraj, String columnTID) throws DBConnectionException, SQLException {
+		String sql = "SELECT "+configTraj.getColumnName("GID")+" as gid,"+
 					columnTID+" as tid,"+
-					configTrajBroke.getColumnName("TIMESTAMP")+" as timestamp,st_x("+
-					configTrajBroke.getColumnName("GEOM")+") as lon,st_y(geom) as lat";
-				sql += configTrajBroke.isStatus() ? ","+configTrajBroke.getColumnName("BOOLEAN STATUS") : "";
-				sql += " from "+ configTrajBroke.getTableNameOrigin()+
-				" where "+columnTID+"="+tid+" order by "+columnTID+","+configTrajBroke.getColumnName("TIMESTAMP")+";";
+					configTraj.getColumnName("TIMESTAMP")+" as timestamp,st_x("+
+					configTraj.getColumnName("GEOM")+") as lon,st_y(geom) as lat";
+				sql += configTraj.isStatus() ? ","+configTraj.getColumnName("BOOLEAN STATUS") : "";
+				sql += " from "+ configTraj.getTableNameOrigin()+
+				" where "+columnTID+"="+tid+" order by "+columnTID+","+configTraj.getColumnName("TIMESTAMP")+";";
 		abraConexao();
 		ResultSet resultSet = DB_CONN.executeQuery(sql);
 		Trajectory result = new Trajectory(tid);
@@ -364,8 +364,8 @@ public class Persistencia implements InterfacePersistencia {
 			Timestamp time = resultSet.getTimestamp("timestamp");
 			int gid = resultSet.getInt("gid");
 			int occupation = 0;
-			if(configTrajBroke.isStatus())
-				occupation = resultSet.getInt(configTrajBroke.getColumnName("BOOLEAN STATUS"));
+			if(configTraj.isStatus())
+				occupation = resultSet.getInt(configTraj.getColumnName("BOOLEAN STATUS"));
 			TPoint p= new TPoint(gid,x,y,time,occupation);
 			result.addPoint(p);
 		}

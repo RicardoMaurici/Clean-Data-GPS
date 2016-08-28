@@ -8,10 +8,15 @@ public class ConfigTraj {
 	private int sample;
 	private double distanceMax;
 	private String columnTID;
-
+	private int minPoints;
+	private double distancePoints;
+	
 	private boolean status;
 	private boolean removeNoiseFromFirst;
 	private boolean removeNoiseFromSecond;
+	private boolean dbscan;
+	private boolean meanFilter;
+	private boolean medianFilter;
 	
 	public ConfigTraj(Object[][] tableData, String tableNameOrigin, int sample, double distanceMax, boolean status){
 		this.tableData = tableData;
@@ -114,6 +119,46 @@ public class ConfigTraj {
 
 	public void setRemoveNoiseFromSecond(boolean removeNoiseFromSecond) {
 		this.removeNoiseFromSecond = removeNoiseFromSecond;
+	}
+
+	public boolean isDbscan() {
+		return dbscan;
+	}
+
+	public void setDbscan(boolean dbscan) {
+		this.dbscan = dbscan;
+	}
+
+	public boolean isMeanFilter() {
+		return meanFilter;
+	}
+
+	public void setMeanFilter(boolean meanFilter) {
+		this.meanFilter = meanFilter;
+	}
+
+	public boolean isMedianFilter() {
+		return medianFilter;
+	}
+
+	public void setMedianFilter(boolean medianFilter) {
+		this.medianFilter = medianFilter;
+	}
+
+	public int getMinPoints() {
+		return minPoints;
+	}
+
+	public void setMinPoints(int minPoints) {
+		this.minPoints = minPoints;
+	}
+
+	public double getDistancePoints() {
+		return distancePoints;
+	}
+
+	public void setDistancePoints(double distancePoints) {
+		this.distancePoints = distancePoints;
 	}
 	
 	

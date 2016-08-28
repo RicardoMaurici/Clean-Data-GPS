@@ -76,5 +76,13 @@ public class Trajectory {
 		}
 		return T;
 	}
+	
+	public boolean hasNext(int index){
+		return index+1 <= this.length()-1;
+	}
+	
+	public boolean hasPrevious(int index){
+		return index-1 >= 0;
+	}
 
 }
