@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
-import br.ufsc.src.control.Utils;
 import br.ufsc.src.lib.de.micromata.opengis.kml.v_2_2_0.Kml;
 import br.ufsc.src.lib.de.micromata.opengis.kml.v_2_2_0.Placemark;
 import br.ufsc.src.lib.de.micromata.opengis.kml.v_2_2_0.gx.Track;

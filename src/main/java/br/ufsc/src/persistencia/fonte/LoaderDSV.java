@@ -3,7 +3,6 @@ package br.ufsc.src.persistencia.fonte;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
 

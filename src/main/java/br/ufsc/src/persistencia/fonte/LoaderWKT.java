@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import br.ufsc.src.control.Utils;
 import br.ufsc.src.persistencia.Persistencia;
 import br.ufsc.src.persistencia.conexao.DBConnectionProvider;
 import br.ufsc.src.persistencia.exception.AddBatchException;

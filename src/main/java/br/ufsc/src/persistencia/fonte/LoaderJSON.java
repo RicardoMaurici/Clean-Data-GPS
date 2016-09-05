@@ -2,19 +2,14 @@ package br.ufsc.src.persistencia.fonte;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.commons.io.IOUtils;
-import org.jdesktop.swingx.plaf.basic.core.LazyActionMap;
 
-import br.ufsc.src.control.Utils;
 import br.ufsc.src.lib.org.json.JSONArray;
-import br.ufsc.src.lib.org.json.JSONException;
 import br.ufsc.src.lib.org.json.JSONObject;
 import br.ufsc.src.persistencia.Persistencia;
 import br.ufsc.src.persistencia.conexao.DBConnectionProvider;
