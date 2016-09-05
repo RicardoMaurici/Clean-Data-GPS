@@ -10,6 +10,7 @@ public class ConfigTraj {
 	private String columnTID;
 	private int minPoints;
 	private double distancePoints;
+	private int numWindowPoints;
 	
 	private boolean status;
 	private boolean removeNoiseFromFirst;
@@ -17,6 +18,7 @@ public class ConfigTraj {
 	private boolean dbscan;
 	private boolean meanFilter;
 	private boolean medianFilter;
+	private boolean pastPoints;
 	
 	public ConfigTraj(Object[][] tableData, String tableNameOrigin, int sample, double distanceMax, boolean status){
 		this.tableData = tableData;
@@ -159,6 +161,22 @@ public class ConfigTraj {
 
 	public void setDistancePoints(double distancePoints) {
 		this.distancePoints = distancePoints;
+	}
+
+	public int getNumWindowPoints() {
+		return numWindowPoints;
+	}
+
+	public void setNumWindowPoints(int numWindowPoints) {
+		this.numWindowPoints = numWindowPoints;
+	}
+
+	public boolean isPastPoints() {
+		return pastPoints;
+	}
+
+	public void setPastPoints(boolean pastPoints) {
+		this.pastPoints = pastPoints;
 	}
 	
 	

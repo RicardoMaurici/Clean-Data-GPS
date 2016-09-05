@@ -5,11 +5,16 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import br.ufsc.src.control.entities.Point;
+import br.ufsc.src.control.entities.TPoint;
 import br.ufsc.src.persistencia.exception.TimeStampException;
 
 public class Utils {
@@ -108,5 +113,58 @@ public class Utils {
 		double distY = Math.abs(p1.getY()-p2.getY());
 		double distYSquare = distY*distY;
 		return Math.sqrt(distXSquare+distYSquare);
+	}
+
+	public static TPoint mean(List<TPoint> pointsToFilter) {
+		TPoint p = new TPoint(pointsToFilter.get(0).getX(), pointsToFilter.get(0).getY());
+		p.setGid(pointsToFilter.get(0).getGid());
+		double x = 0;
+		double y = 0;		
+		for (TPoint tPoint : pointsToFilter) {
+			x += tPoint.getX();
+			y += tPoint.getY();
+		}
+		p.setX(x/pointsToFilter.size());
+		p.setY(y/pointsToFilter.size());
+		return p;
+	}
+
+	public static TPoint median(List<TPoint> pointsToFilter) {
+		List<Double> x = new ArrayList();
+		List<Double> y = new ArrayList();
+		TPoint p = new TPoint(pointsToFilter.get(0).getX(), pointsToFilter.get(0).getY());
+		p.setGid(pointsToFilter.get(0).getGid());
+		
+		for (TPoint point : pointsToFilter) {
+			x.add(point.getX());
+			y.add(point.getY());
+		}
+		Collections.sort(x);
+		Collections.reverse(x);
+		Collections.sort(y);
+		Collections.reverse(y);
+		
+		double[] arrayx = new double[x.size()];
+		double[] arrayy = new double[y.size()];
+		
+		for (int i = 0; i < arrayy.length; i++) {
+			arrayx[i] = x.get(i);
+			arrayy[i] = y.get(i);
+		}
+		double medianX = median(arrayx);
+		double medianY = median(arrayy);
+		
+		p.setX(medianX);
+		p.setY(medianY);
+		
+		return p;
+	}
+	
+	public static double median(double[] m) {
+	    int middle = m.length/2;
+	    if (m.length%2 == 1) 
+	        return m[middle];
+	    else 
+	        return (m[middle-1] + m[middle]) / 2.0;
 	}
 }

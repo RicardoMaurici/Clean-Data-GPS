@@ -37,13 +37,14 @@ import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 public class RemoveNoisePanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel tableLabel, speedLabel, minPointsLabel, distancePointsLabel, dbscanLabel, meanFilterLabel, medianFilterLabel;
-	private JTextField tableTF, speedTF, minPointsTF, distancePointsTF;
+	private JLabel tableLabel, speedLabel, minPointsLabel, distancePointsLabel, dbscanLabel, meanMedianFilterLabel, numWindowPointsLabel;
+	private JTextField tableTF, speedTF, minPointsTF, distancePointsTF, numWindowPointsTF;
 	private JButton tableBtn;
 	private JTable table1;
 	private JScrollPane table;
 	private JRadioButton fromFirst, fromSecondLookingBackward, dbscanRB, meanFilterRB, medianFilterRB;
-	private JSeparator sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8, sep9;
+	private JCheckBox pastPointsJC;
+	private JSeparator sep1, sep2, sep3, sep4, sep5, sep6;
 	
 
 	public RemoveNoisePanel(ServiceControl controle) {
@@ -88,10 +89,10 @@ public class RemoveNoisePanel extends AbstractPanel{
 		distancePointsTF = new JTextField();
 		distancePointsTF.setToolTipText("Distance between points in meters");
 		
-		medianFilterLabel = new JLabel("-- Median Filter --");
-		
-		meanFilterLabel = new JLabel("-- Mean Filter --");
-		
+		meanMedianFilterLabel = new JLabel("-- Mean/Median Filter --");
+		numWindowPointsLabel = new JLabel("Num. window points");
+		numWindowPointsTF = new JTextField();
+		pastPointsJC = new JCheckBox("Only past points");
 		
 		Object [] columnNames = new Object[]{ "Column", "Kind" };
         Object [][] data        = new Object[][]{};
@@ -108,9 +109,6 @@ public class RemoveNoisePanel extends AbstractPanel{
 		sep4 = new JSeparator(SwingConstants.HORIZONTAL);
 		sep5 = new JSeparator(SwingConstants.HORIZONTAL);
 		sep6 = new JSeparator(SwingConstants.HORIZONTAL);
-		sep7 = new JSeparator(SwingConstants.HORIZONTAL);
-		sep8 = new JSeparator(SwingConstants.HORIZONTAL);
-		sep9 = new JSeparator(SwingConstants.HORIZONTAL);
 	}
 	
 	@Override
@@ -136,9 +134,9 @@ public class RemoveNoisePanel extends AbstractPanel{
 										.addComponent(minPointsLabel)
 										.addComponent(distancePointsLabel)
 										.addComponent(sep4)
-										.addComponent(meanFilterLabel)
-										.addComponent(sep7)
-										.addComponent(medianFilterLabel)
+										.addComponent(meanMedianFilterLabel)
+										.addComponent(numWindowPointsLabel)
+										.addComponent(pastPointsJC)
 								)
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(speedTF)
@@ -146,7 +144,7 @@ public class RemoveNoisePanel extends AbstractPanel{
 										.addComponent(minPointsTF)
 										.addComponent(distancePointsTF)
 										.addComponent(sep5)
-										.addComponent(sep8)
+										.addComponent(numWindowPointsTF)
 								)
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(fromFirst)
@@ -155,7 +153,6 @@ public class RemoveNoisePanel extends AbstractPanel{
 										.addComponent(dbscanRB)
 										.addComponent(sep6)
 										.addComponent(meanFilterRB)
-										.addComponent(sep9)
 										.addComponent(medianFilterRB)
 								)		
 						)
@@ -204,16 +201,13 @@ public class RemoveNoisePanel extends AbstractPanel{
 						.addComponent(sep5)
 						.addComponent(sep6))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(meanFilterLabel))
+						.addComponent(meanMedianFilterLabel))
 				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(numWindowPointsLabel)
+						.addComponent(numWindowPointsTF)
 						.addComponent(meanFilterRB))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(sep7)
-						.addComponent(sep8)
-						.addComponent(sep9))
-				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(medianFilterLabel))
-				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(pastPointsJC)
 						.addComponent(medianFilterRB))
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(processButton))
@@ -308,11 +302,19 @@ public class RemoveNoisePanel extends AbstractPanel{
 			return null;
 		}
 		
+		if((meanFilterRB.isSelected() || medianFilterRB.isSelected()) && (Utils.isStringEmpty(numWindowPointsTF.getText()) || !Utils.isNumeric(numWindowPointsTF.getText()) || Integer.parseInt(numWindowPointsTF.getText()) < 2)){
+			JOptionPane.showMessageDialog(null,"You should set a NUMBER bigger than 1 to the window points","Data Clean", JOptionPane.ERROR_MESSAGE);
+			numWindowPointsTF.setText("");
+			numWindowPointsTF.requestFocus(true);
+			return null;
+		}
+		
 		String tableName = tableTF.getText();
 
 		String speed = Utils.isNumeric(speedTF.getText()) ? speedTF.getText() : null;
-		int minPoints = Utils.isNumeric(minPointsTF.getText()) ? Integer.parseInt(minPointsTF.getText()) : null;
-		double distPoints = Utils.isNumeric(distancePointsTF.getText()) ? Double.parseDouble(distancePointsTF.getText()) : null;
+		int minPoints = Utils.isNumeric(minPointsTF.getText()) ? Integer.parseInt(minPointsTF.getText()) : 0;
+		double distPoints = Utils.isNumeric(distancePointsTF.getText()) ? Double.parseDouble(distancePointsTF.getText()) : 0;
+		int numWindowPoints = Utils.isNumeric(numWindowPointsTF.getText()) ? Integer.parseInt(numWindowPointsTF.getText()) : 0;
 		
 		ConfigTraj configTraj= new ConfigTraj(tableData, tableName);
 		configTraj.setRemoveNoiseFromFirst(fromFirst.isSelected());
@@ -320,7 +322,9 @@ public class RemoveNoisePanel extends AbstractPanel{
 		configTraj.setDbscan(dbscanRB.isSelected());
 		configTraj.setMeanFilter(meanFilterRB.isSelected());
 		configTraj.setMedianFilter(medianFilterRB.isSelected());
+		configTraj.setPastPoints(pastPointsJC.isSelected());
 		
+		configTraj.setNumWindowPoints(numWindowPoints);
 		configTraj.setSpeed(speed);
 		configTraj.setMinPoints(minPoints);
 		configTraj.setDistancePoints(distPoints);

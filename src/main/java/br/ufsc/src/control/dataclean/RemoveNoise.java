@@ -9,8 +9,9 @@ import br.ufsc.src.control.Utils;
 import br.ufsc.src.control.entities.TPoint;
 import br.ufsc.src.control.entities.Trajectory;
 import br.ufsc.src.persistencia.InterfacePersistencia;
-import br.ufsc.src.persistencia.Persistencia;
+import br.ufsc.src.persistencia.exception.AddBatchException;
 import br.ufsc.src.persistencia.exception.DBConnectionException;
+import br.ufsc.src.persistencia.exception.ExecuteBatchException;
 
 public class RemoveNoise {
 
@@ -22,7 +23,7 @@ public class RemoveNoise {
 		this.persistencia = persistencia;
 	}
 
-	public void findRemoveNoise(Set<Integer> tids) throws DBConnectionException, SQLException {
+	public void findRemoveNoise(Set<Integer> tids) throws DBConnectionException, SQLException, AddBatchException, ExecuteBatchException {
 		for (Integer tid : tids) {
 			Trajectory traj = persistencia.fetchTrajectory(tid, configTraj, configTraj.getColumnName("TID"));
 			if(configTraj.isRemoveNoiseFromFirst()){
@@ -33,12 +34,61 @@ public class RemoveNoise {
 				removeFromSecond(traj, speed);
 			}else if(configTraj.isDbscan()){
 				dbscan(traj);
-			}else if(configTraj.isMeanFilter()){
-				
-			}else if(configTraj.isMedianFilter()){
-				
+			}else if(configTraj.isMeanFilter() || configTraj.isMedianFilter()){
+				if(configTraj.isPastPoints())
+					meanMedianFilterOnlyPastPoints(traj);
+				else
+					meanMedianFilter(traj);
 			}
 		}
+	}
+	
+	private void meanMedianFilter(Trajectory traj) throws DBConnectionException, AddBatchException, ExecuteBatchException{
+		int numWindowPoints = configTraj.getNumWindowPoints();
+		if(traj.length() < numWindowPoints)
+			return;
+		List<TPoint> pointsToUpdate = new ArrayList<TPoint>();
+	    for (int i = 0; i < traj.length(); i++) {
+	    	TPoint p = traj.getPoint(i);
+	    	List<TPoint> pointsToFilter = new ArrayList<TPoint>();
+	    	pointsToFilter.add(p);
+	    	for(int z = 1; z <= numWindowPoints/2; z++){
+	    		if(traj.hasNext(i+z))
+	    			pointsToFilter.add(traj.getPoint(i+z));
+	    		if(traj.hasPrevious(i-z) && pointsToFilter.size() != numWindowPoints)
+	    			pointsToFilter.add(traj.getPoint(i-z));
+	    	}
+	    	if(pointsToFilter.size() == numWindowPoints){
+	    		if(configTraj.isMeanFilter())
+	    			pointsToUpdate.add(Utils.mean(pointsToFilter));
+	    		else if(configTraj.isMedianFilter())
+	    			pointsToUpdate.add(Utils.median(pointsToFilter));
+	    	}
+	    }
+	    persistencia.updateGIDs(pointsToUpdate, configTraj);
+	}
+	
+	private void meanMedianFilterOnlyPastPoints(Trajectory traj) throws DBConnectionException, AddBatchException, ExecuteBatchException{
+		int numWindowPoints = configTraj.getNumWindowPoints();
+		if(traj.length() < numWindowPoints)
+			return;
+		List<TPoint> pointsToUpdate = new ArrayList<TPoint>();
+	    for (int i = 0; i < traj.length(); i++) {
+	    	TPoint p = traj.getPoint(i);
+	    	List<TPoint> pointsToFilter = new ArrayList<TPoint>();
+	    	pointsToFilter.add(p);
+	    	for(int z = 1; z < numWindowPoints; z++){
+	    		if(traj.hasPrevious(i-z) || i-z == 0)
+	    			pointsToFilter.add(traj.getPoint(i-z));
+	    	}
+	    	if(pointsToFilter.size() == numWindowPoints){
+	    		if(configTraj.isMeanFilter())
+	    			pointsToUpdate.add(Utils.mean(pointsToFilter));
+	    		else if(configTraj.isMedianFilter())
+	    			pointsToUpdate.add(Utils.median(pointsToFilter));
+	    	}	 	    
+	    }
+	    persistencia.updateGIDs(pointsToUpdate, configTraj);
 	}
 	
 	private void dbscan(Trajectory traj) throws DBConnectionException, SQLException{

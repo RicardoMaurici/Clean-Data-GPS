@@ -61,7 +61,7 @@ public class Persistencia implements InterfacePersistencia {
 	}
 
 	public void leiaTabela() throws DBConnectionException{
-		this.abraConexao();
+		abraConexao();
 		try {
 			ResultSet rs = DB_CONN.quickQuery("truck",null,null,"order by truckid, time");
 			while (rs.next()) {
@@ -71,7 +71,7 @@ public class Persistencia implements InterfacePersistencia {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.fechaConexao();
+		fechaConexao();
 	}
 
 	public static void abraConexao() throws DBConnectionException{
@@ -104,7 +104,7 @@ public class Persistencia implements InterfacePersistencia {
 			if(tb.isTID())
 				createSequence(tb.getTabelaBanco(), "tid");
 			leiaCarregaDiretorios(dir.getUrl(), dir.getIgFile(), dir.getIgFolder(), dir.getExtension(), dir.isIgExtension(), tb);
-			updateGeom(tb.getSridNovo(), tb.getSridAtual(), tb.getTabelaBanco());
+			updateNewGeom(tb.getSridNovo(), tb.getSridAtual(), tb.getTabelaBanco());
 		} catch (IOException e) {
 			throw new LoadDataFileException(e.getMessage());
 		}
@@ -142,7 +142,7 @@ public class Persistencia implements InterfacePersistencia {
 		q = q.trim().toLowerCase();
 		q = q.substring(0, q.length()-1);
 		q += ");";
-		this.abraConexao();
+		abraConexao();
 		try {
 			DB_CONN.execute(q);
 		}catch(PSQLException e){
@@ -150,7 +150,7 @@ public class Persistencia implements InterfacePersistencia {
 		}catch (SQLException e) {
 			throw new CreateTableException(e.getMessage());
 		}
-		this.fechaConexao();
+		fechaConexao();
 		
 	}
 	
@@ -205,7 +205,7 @@ public class Persistencia implements InterfacePersistencia {
 		leitor.loadFile(file, tb, folder_id);
 	}
 
-	private void updateGeom(int newSrid, int currentSrid, String tableName) throws UpdateGeomException, DBConnectionException{
+	private void updateNewGeom(int newSrid, int currentSrid, String tableName) throws UpdateGeomException, DBConnectionException{
 		try {
 			if(newSrid != currentSrid){
 				abraConexao();
@@ -279,13 +279,13 @@ public class Persistencia implements InterfacePersistencia {
 	
 	public void addColumn(String tableName, String ColumnName, String columnType) throws DBConnectionException, AddColumnException{
 		String sql = "ALTER TABLE "+tableName+" ADD COLUMN "+ColumnName+" "+columnType+";";
-		this.abraConexao();
+		abraConexao();
 		try {
 			DB_CONN.execute(sql);
 		} catch (SQLException e) {
 			throw new AddColumnException(e.getMessage());
 		}
-		this.fechaConexao();
+		fechaConexao();
 	}
 
 	public void createIndex(String tableName, String columnName, String indexType) throws DBConnectionException, SQLException {
@@ -401,6 +401,53 @@ public class Persistencia implements InterfacePersistencia {
 		String sql = "COPY "+table+" TO '"+path+"/"+table+".csv' DELIMITER ',' CSV HEADER;";
 		abraConexao();
 		DB_CONN.execute(sql);
+		fechaConexao();
+	}
+
+	public void updateGIDs(List<TPoint> pointsToUpdate, ConfigTraj configTraj) throws DBConnectionException, AddBatchException, ExecuteBatchException {
+		
+		String colGeom = configTraj.getColumnName("geom");
+		String colTID = configTraj.getColumnName("tid");
+		String colGID = configTraj.getColumnName("gid");
+		String colLon = configTraj.getColumnName("lon");
+		String colLat = configTraj.getColumnName("lat");
+		String tableName = configTraj.getTableNameOrigin();
+		int srid= 0;
+		abraConexao();
+		ResultSet resultSet;
+		try {
+			resultSet = DB_CONN.executeQuery("select ST_SRID("+colGeom+") from "+tableName+" limit 1;");
+			resultSet.next();
+			srid = resultSet.getInt("st_srid");
+			DB_CONN.createStatement();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		int cont = 0;
+		
+		for (TPoint tPoint : pointsToUpdate) {
+			String sql = "update "+tableName+" set "+colGeom+" = "+"ST_SetSRID(ST_MakePoint(" + tPoint.getX() + "," + tPoint.getY() + ")," + srid + ")"+ " where "+colGID+" = "+tPoint.getGid()+";";
+			try {
+				DB_CONN.addBatch(sql);
+				cont++;
+			} catch (SQLException e) {
+				throw new AddBatchException(e.getMessage());
+			}
+			if(cont == 200000){
+				try {
+					DB_CONN.executeBatch();
+				} catch (SQLException e) {
+					throw new ExecuteBatchException(e.getMessage());
+				}
+				cont = 0;
+			}
+		}
+		try {
+			DB_CONN.executeBatch();
+			DB_CONN.closeStatement();
+		} catch (SQLException e) {
+			throw new ExecuteBatchException(e.getMessage());
+		}
 		fechaConexao();
 	}
 	

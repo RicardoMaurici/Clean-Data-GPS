@@ -134,7 +134,7 @@ public class ServiceControl {
 		}	
 	}
 
-	public void removeNoise(ConfigTraj configTraj) {
+	public void removeNoise(ConfigTraj configTraj) throws AddBatchException, ExecuteBatchException {
 		Set<Integer> tids = null;
 		RemoveNoise removeNoise = new RemoveNoise(persistencia, configTraj);
 		try {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.ufsc.src.control.dataclean.ConfigTraj;
+import br.ufsc.src.control.entities.TPoint;
 import br.ufsc.src.control.entities.Trajectory;
 import br.ufsc.src.persistencia.exception.AddBatchException;
 import br.ufsc.src.persistencia.exception.AddColumnException;
@@ -59,5 +60,7 @@ public interface InterfacePersistencia {
 	public void deleteByGids(List<Integer> gids, String tableNameOrigin) throws DBConnectionException, SQLException;
 
 	public void exportTable(String path, String table) throws DBConnectionException, SQLException;
+
+	public void updateGIDs(List<TPoint> pointsToUpdate, ConfigTraj configTraj) throws DBConnectionException, AddBatchException, ExecuteBatchException;
 	
 }
