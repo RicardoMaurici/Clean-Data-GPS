@@ -43,7 +43,7 @@ public class RemoveNoisePanel extends AbstractPanel{
 	private JTable table1;
 	private JScrollPane table;
 	private JRadioButton fromFirst, fromSecondLookingBackward, dbscanRB, meanFilterRB, medianFilterRB;
-	private JCheckBox pastPointsJC;
+	private JCheckBox pastPointsJC, removeNeighborNoiseJC;
 	private JSeparator sep1, sep2, sep3, sep4, sep5, sep6;
 	
 
@@ -88,6 +88,7 @@ public class RemoveNoisePanel extends AbstractPanel{
 		distancePointsLabel = new JLabel("Dist. points");
 		distancePointsTF = new JTextField();
 		distancePointsTF.setToolTipText("Distance between points in meters");
+		removeNeighborNoiseJC = new JCheckBox("Remove neighbor and noise");
 		
 		meanMedianFilterLabel = new JLabel("-- Mean/Median Filter --");
 		numWindowPointsLabel = new JLabel("Num. window points");
@@ -133,6 +134,7 @@ public class RemoveNoisePanel extends AbstractPanel{
 										.addComponent(dbscanLabel)
 										.addComponent(minPointsLabel)
 										.addComponent(distancePointsLabel)
+										.addComponent(removeNeighborNoiseJC)
 										.addComponent(sep4)
 										.addComponent(meanMedianFilterLabel)
 										.addComponent(numWindowPointsLabel)
@@ -196,6 +198,8 @@ public class RemoveNoisePanel extends AbstractPanel{
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(distancePointsLabel)
 						.addComponent(distancePointsTF))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(removeNeighborNoiseJC))
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(sep4)
 						.addComponent(sep5)
@@ -320,6 +324,7 @@ public class RemoveNoisePanel extends AbstractPanel{
 		configTraj.setRemoveNoiseFromFirst(fromFirst.isSelected());
 		configTraj.setRemoveNoiseFromSecond(fromSecondLookingBackward.isSelected());
 		configTraj.setDbscan(dbscanRB.isSelected());
+		configTraj.setRemoveNeighborNoise(removeNeighborNoiseJC.isSelected());
 		configTraj.setMeanFilter(meanFilterRB.isSelected());
 		configTraj.setMedianFilter(medianFilterRB.isSelected());
 		configTraj.setPastPoints(pastPointsJC.isSelected());

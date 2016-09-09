@@ -33,7 +33,7 @@ public class RemoveNoise {
 				double speed = Double.parseDouble(configTraj.getSpeed());
 				removeFromSecond(traj, speed);
 			}else if(configTraj.isDbscan()){
-				dbscan(traj);
+					dbscan(traj,configTraj.isRemoveNeighborNoise());
 			}else if(configTraj.isMeanFilter() || configTraj.isMedianFilter()){
 				if(configTraj.isPastPoints())
 					meanMedianFilterOnlyPastPoints(traj);
@@ -91,7 +91,7 @@ public class RemoveNoise {
 	    persistencia.updateGIDs(pointsToUpdate, configTraj);
 	}
 	
-	private void dbscan(Trajectory traj) throws DBConnectionException, SQLException{
+	private void dbscan(Trajectory traj, boolean neighborAndNoise ) throws DBConnectionException, SQLException{
 		if(traj.length() < configTraj.getMinPoints())
 			return;
         List<Integer> gidsToRemove = new ArrayList<Integer>();
@@ -125,14 +125,16 @@ public class RemoveNoise {
         				numNoises++;
         		}
         	}
-        	if(nearPoints < minPoints){
+        	if(neighborAndNoise && nearPoints == 0){
+        		gidsToRemove.add(p.getGid());
+        		traj.getPoints().remove(i);
+        	}else if(!neighborAndNoise && nearPoints < minPoints){
         		gidsToRemove.add(p.getGid());
         		traj.getPoints().remove(i);
         	}else
         		i++;
         }
         persistencia.deleteByGids(gidsToRemove, configTraj.getTableNameOrigin());
-      
 	}
 
 	private void removeFromFirst(Trajectory traj, double speed) throws DBConnectionException, SQLException {
@@ -201,60 +203,4 @@ public class RemoveNoise {
 	     }
 	     return false;
 	 }
-	
-	
-	/*  int i = 0;
-      while (i < traj.length()) {    //para cada point
-      	TPoint p1 = traj.getPoint(i);
-      	int numPoints = 0;
-      	System.out.println("P1 "+p1.getGid());
-      	
-      	if(traj.hasNext(i)){ //se tem proximo
-      		for(int z = 1; z <= configTraj.getMinPoints(); z++){
-      			if(i+z < traj.length()){
-      				TPoint p = traj.getPoint(i+z);
-      				System.out.println("P "+p.getGid());
-      				double distance  = Utils.euclidean(p1, p);
-      				System.out.println(p1.getGid()+" "+ p.getGid()+" "+distance+" "+configTraj.getDistancePoints());
-      				if(distance <= configTraj.getDistancePoints()){
-      					System.out.println("incrementando");
-      					numPoints++;
-      				}
-      			}else{
-      				System.out.println("break");
-      				break;
-      			}
-      		}
-      		int numPrevious = 1;
-      		if(traj.hasPrevious(i)){
-	        		while(numPoints < configTraj.getMinPoints()){
-	        			if(traj.hasPrevious(i-numPrevious-1)){
-	        				TPoint p = traj.getPoint(i-numPrevious);
-	        				System.out.println("numPrevious "+p.getGid());
-	        				double distance  = Utils.euclidean(p1, p);
-	        				if(distance <= configTraj.getDistanceMax()){
-	        					System.out.println("incrementando");
-	        					numPoints++;	
-	        				}
-	        			}else{
-	        				break;
-	        			}
-	        			numPrevious++;
-	        		}
-      		}
-      		System.out.println("aqui");
-      		
-      		
-      	}else if(traj.hasPrevious(i)){
-      		
-      	}   	
-      	System.out.println(" Final while "+numPoints);
-      	if(numPoints < configTraj.getMinPoints())
-      		System.out.println("Deletar "+p1.getGid() +" "+ numPoints);
-      	
-      	i++;
-         
-
-      }*/
-
 }

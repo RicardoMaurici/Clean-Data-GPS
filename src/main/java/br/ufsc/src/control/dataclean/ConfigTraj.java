@@ -19,6 +19,7 @@ public class ConfigTraj {
 	private boolean meanFilter;
 	private boolean medianFilter;
 	private boolean pastPoints;
+	private boolean removeNeighborNoise;
 	
 	public ConfigTraj(Object[][] tableData, String tableNameOrigin, int sample, double distanceMax, boolean status){
 		this.tableData = tableData;
@@ -177,6 +178,14 @@ public class ConfigTraj {
 
 	public void setPastPoints(boolean pastPoints) {
 		this.pastPoints = pastPoints;
+	}
+
+	public boolean isRemoveNeighborNoise() {
+		return removeNeighborNoise;
+	}
+
+	public void setRemoveNeighborNoise(boolean removeNeighborNoise) {
+		this.removeNeighborNoise = removeNeighborNoise;
 	}
 	
 	
