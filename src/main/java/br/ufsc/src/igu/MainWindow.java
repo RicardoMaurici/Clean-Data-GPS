@@ -15,6 +15,7 @@ import br.ufsc.src.igu.panel.AbstractPanel;
 import br.ufsc.src.igu.panel.BrokeTrajectory;
 import br.ufsc.src.igu.panel.LoadPanelDSV;
 import br.ufsc.src.igu.panel.RemoveNoisePanel;
+import br.ufsc.src.igu.panel.TrajNearPointPanel;
 import br.ufsc.src.igu.panel.ConnectionPanel;
 import br.ufsc.src.igu.panel.ExportTablePanel;
 import br.ufsc.src.igu.panel.LoadPanel;
@@ -81,6 +82,9 @@ public class MainWindow extends JFrame implements ActionListener {
 			break;
 		case OPTIONEXPORTCSV:
 			panel = new ExportTablePanel(control);
+			break;
+		case OPTIONTRAJNEARPOINT:
+			panel = new TrajNearPointPanel(control);
 			break;
 		} 
 		setContentPane(panel);

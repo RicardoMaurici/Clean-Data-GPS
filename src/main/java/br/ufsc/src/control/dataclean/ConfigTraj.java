@@ -1,5 +1,7 @@
 package br.ufsc.src.control.dataclean;
 
+import br.ufsc.src.control.entities.TPoint;
+
 public class ConfigTraj {
 	private Object[][] tableData;
 	private String tableNameOrigin;
@@ -11,6 +13,7 @@ public class ConfigTraj {
 	private int minPoints;
 	private double distancePoints;
 	private int numWindowPoints;
+	private TPoint point;
 	
 	private boolean status;
 	private boolean removeNoiseFromFirst;
@@ -32,6 +35,13 @@ public class ConfigTraj {
 	public ConfigTraj(Object[][] tableData, String tableNameOrigin){
 		this.tableData = tableData;
 		this.tableNameOrigin = tableNameOrigin;
+	}
+	
+	public ConfigTraj(Object[][] tableData, String tableNameOrigin, TPoint point, double distanceBuffer){
+		this.tableData = tableData;
+		this.tableNameOrigin = tableNameOrigin;
+		this.point = point;
+		this.distanceMax = distanceBuffer;
 	}
 
 	public Object[][] getTableData() {
@@ -186,6 +196,14 @@ public class ConfigTraj {
 
 	public void setRemoveNeighborNoise(boolean removeNeighborNoise) {
 		this.removeNeighborNoise = removeNeighborNoise;
+	}
+
+	public TPoint getPoint() {
+		return point;
+	}
+
+	public void setPoint(TPoint point) {
+		this.point = point;
 	}
 	
 	

@@ -63,4 +63,6 @@ public interface InterfacePersistencia {
 
 	public void updateGIDs(List<TPoint> pointsToUpdate, ConfigTraj configTraj) throws DBConnectionException, AddBatchException, ExecuteBatchException;
 	
+	public boolean createTableMoveTrajNearPoint(String sql, String columnName, String tidColumn);
+	
 }

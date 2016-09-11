@@ -44,6 +44,11 @@ public class MenuBar extends JMenuBar {
 		item.setActionCommand(EnumMenuOption.OPTIONDBROKETRAJECTORY.name());
 		item.addActionListener(mainWindow);
 		
+		item = new JMenuItem("Traj Near Point");
+		menu.add(item);
+		item.setActionCommand(EnumMenuOption.OPTIONTRAJNEARPOINT.name());
+		item.addActionListener(mainWindow);
+		
 		item = new JMenuItem("Remove Noise");
 		menu.add(item);
 		item.setActionCommand(EnumMenuOption.OPTIONREMOVENOISE.name());

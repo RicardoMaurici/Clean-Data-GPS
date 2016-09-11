@@ -145,11 +145,27 @@ public class ServiceControl {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	public void exportTable(String path, String table) throws DBConnectionException, SQLException {
 		persistencia.exportTable(path,table);
+	}
+	
+	public boolean trajNearPoint(ConfigTraj configTraj) throws DBConnectionException, SQLException{
+		String geomColumnName = configTraj.getColumnName("geom");
+		String tidColumnName = configTraj.getColumnName("tid");
+		
+		persistencia.createIndex(configTraj.getTableNameOrigin(), tidColumnName, "btree");
+		persistencia.createIndex(configTraj.getTableNameOrigin(), geomColumnName, "rtree");
+		
+		String sql = "select distinct tid from "+configTraj.getTableNameOrigin()+" where st_intersects(geom, ST_Buffer(ST_transform(st_setsrid(ST_Makepoint("+
+				configTraj.getPoint().getX()+","+configTraj.getPoint().getY()+"),4326),900913),"+configTraj.getDistanceMax()+"))";
+		boolean moved = persistencia.createTableMoveTrajNearPoint(sql,configTraj.getTableNameOrigin(), tidColumnName);
+		
+		persistencia.dropIndex(configTraj.getTableNameOrigin(), tidColumnName);
+		persistencia.dropIndex(configTraj.getTableNameOrigin(), geomColumnName);
+		
+		return moved;
 	}
 	
 }

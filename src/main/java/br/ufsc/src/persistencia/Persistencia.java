@@ -451,4 +451,30 @@ public class Persistencia implements InterfacePersistencia {
 		fechaConexao();
 	}
 	
+	public boolean createTableMoveTrajNearPoint(String sql, String tableName, String tidColumn){
+		String hasResult = sql+" limit 1;";
+		String sql1 = "create table "+tableName+"_trajsnearpoint as select * from "+tableName+" where "+tidColumn+" in ("+sql+");";
+		boolean rt = false;
+		try {
+			abraConexao();
+		} catch (DBConnectionException e) {
+			return false;
+		}
+		ResultSet resultSet;
+		try {
+			resultSet = DB_CONN.executeQuery(hasResult);
+			if(resultSet.next()){
+				DB_CONN.execute(sql1);
+				rt = true;
+			}else
+				rt = false;
+		} catch (SQLException e1) {
+		}
+		try {
+			fechaConexao();
+		} catch (DBConnectionException e) {
+		}
+		return rt;
+	}
+	
 }
