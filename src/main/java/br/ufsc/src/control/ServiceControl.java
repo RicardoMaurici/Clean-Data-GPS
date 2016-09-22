@@ -72,6 +72,7 @@ public class ServiceControl {
 		TrajBroke trajBroke = new TrajBroke(persistencia, configTrajBroke);
 		persistencia.addColumn(configTrajBroke.getTableNameOrigin(), "old_tid", "numeric");
 		persistencia.createIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("gid"), "btree");
+		persistencia.createIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("tid"), "btree");
 		cleanColumns(configTrajBroke);
 		Set<Integer> tids = null;
 		String columnNewTID = configTrajBroke.getColumnName("TID");
@@ -101,6 +102,7 @@ public class ServiceControl {
 			}
 		}catch(Exception e){
 			persistencia.dropIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("gid"));
+			persistencia.dropIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("tid"));
 			persistencia.dropColumn(configTrajBroke.getTableNameOrigin(), "old_tid");
 			if(configTrajBroke.isStatus())
 				persistencia.dropColumn(configTrajBroke.getTableNameOrigin(), "status_tid");
@@ -119,6 +121,7 @@ public class ServiceControl {
 		if(configTrajBroke.getDistanceMax() != 0)
 			persistencia.dropColumn(configTrajBroke.getTableNameOrigin(), "distance_tid");
 		persistencia.dropIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("gid"));
+		persistencia.dropIndex(configTrajBroke.getTableNameOrigin(), configTrajBroke.getColumnName("tid"));
 	}
 
 	private void cleanColumns(ConfigTraj configTrajBroke) throws SQLException, DBConnectionException {

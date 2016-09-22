@@ -20,8 +20,12 @@ import br.ufsc.src.persistencia.exception.TimeStampException;
 public class Utils {
 	
 	public static String getTimeStamp(String date, String time, String dateFormat, String timeFormat, boolean usaTimeStamp) throws TimeStampException {
+		date = date.replace("\"", "");
+		time = time.replace("\"", "");
 		String dt = "";
-		if(usaTimeStamp){  
+		if(usaTimeStamp){ 
+			if(date.length() == 10)
+				date = date+"000000";
 			long newdate = Long.parseLong(date)/1000; //Considering miliseconds
 			java.sql.Timestamp timeStampDate = new Timestamp(newdate);
 			dt = timeStampDate.toString();

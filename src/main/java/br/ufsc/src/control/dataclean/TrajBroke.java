@@ -1,6 +1,8 @@
 package br.ufsc.src.control.dataclean;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import br.ufsc.src.control.Utils;
@@ -30,7 +32,7 @@ public class TrajBroke {
 		for (Integer tid : tids) {
 			Trajectory t = persistencia.fetchTrajectory(tid, configTrajBroke, configTrajBroke.getColumnName("TID"));
 			int sequenceValue = persistencia.getSeq(configTrajBroke.getTableNameOrigin(), "tid");
-			
+			List<String> querys = new ArrayList<String>();
 			for (int i = 0; i < t.getPoints().size(); i++) {
                 TPoint p = t.getPoint(i);
                 boolean diff = false;
@@ -39,12 +41,13 @@ public class TrajBroke {
                 }
 
                 if (!diff) {
-                    persistencia.updateTID("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
+                    querys.add("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
                 } else {
                     sequenceValue = persistencia.getSeq(configTrajBroke.getTableNameOrigin(), "tid");
-                    persistencia.updateTID("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
+                    querys.add("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
                 }
             }
+			persistencia.updateTID(querys);
 		}
 	}
 
@@ -55,22 +58,24 @@ public class TrajBroke {
 		String columnTID = configTrajBroke.isStatus() ? "status_tid" : configTrajBroke.getColumnName("TID");
 
 		double samplingGap = configTrajBroke.getSample();
-
+		
 	    for (Integer tid : tids) {
 	    	Trajectory t = persistencia.fetchTrajectory(tid, configTrajBroke, columnTID);
 	        int sequenceValue = persistencia.getSeq(configTrajBroke.getTableNameOrigin(), "tid");
+	        List<String> querys = new ArrayList<String>();
 	        for (int i = 0; i < t.getPoints().size(); i++) {
 	        	TPoint p = t.getPoint(i);
 	            long timeDiff = 0;
 	            if (i != 0) 
 	            	timeDiff = p.getTime() - t.getPoint(i - 1).getTime(); 
 	            if (timeDiff/1000 <= samplingGap) {
-	            	persistencia.updateTID("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
+	            	querys.add("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
 	            } else {
 	            	sequenceValue = persistencia.getSeq(configTrajBroke.getTableNameOrigin(), "tid");
-	            	persistencia.updateTID("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
+	            	querys.add("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
 	           }
 	       }
+	       persistencia.updateTID(querys);
 	   }
 	}
 
@@ -88,18 +93,20 @@ public class TrajBroke {
 		for(Integer tid : tids){
 			Trajectory t = persistencia.fetchTrajectory(tid, configTrajBroke, columnTID);
 	        int sequenceValue = persistencia.getSeq(configTrajBroke.getTableNameOrigin(), "tid");
+	        List<String> querys = new ArrayList<String>();
 	        for (int i = 0; i < t.getPoints().size(); i++) {
 	        	TPoint p = t.getPoint(i);
 	        	double distance = 0;
 	        	if(i != 0)
 	        		distance = Utils.euclidean(p, t.getPoint(i - 1));
 	        	if(distance <= distanceGap){
-	        		persistencia.updateTID("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
+	        		querys.add("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
 	        	}else{
 	        		sequenceValue = persistencia.getSeq(configTrajBroke.getTableNameOrigin(), "tid");
-	            	persistencia.updateTID("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
+	            	querys.add("update "+configTrajBroke.getTableNameOrigin()+" set "+trajid+"=" + sequenceValue + " where "+gid+"=" + p.getGid());
 	        	}
 	        }
+	        persistencia.updateTID(querys);
 		}
 	}
 	

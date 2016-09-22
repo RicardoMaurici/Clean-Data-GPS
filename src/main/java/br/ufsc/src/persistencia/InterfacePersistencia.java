@@ -53,7 +53,7 @@ public interface InterfacePersistencia {
 
 	public Trajectory fetchTrajectory(Integer tid, ConfigTraj configTrajBroke, String columnTID) throws DBConnectionException, SQLException;
 
-	public void updateTID(String string) throws SQLException, DBConnectionException;
+	public void updateTID(List<String> querys) throws SQLException, DBConnectionException;
 	
 	public void deletePointWhere(String tableName, String columnName, String operator, double condition) throws SQLException, DBConnectionException;
 

@@ -373,11 +373,15 @@ public class Persistencia implements InterfacePersistencia {
 		return result;
 	}
 
-	public void updateTID(String sql) throws SQLException, DBConnectionException {
+	public void updateTID(List<String> querys) throws SQLException, DBConnectionException {
 		abraConexao();
-		DB_CONN.execute(sql);
+		DB_CONN.createStatement();
+		for (String sql : querys) {
+			DB_CONN.addBatch(sql);
+		}
+		DB_CONN.executeBatch();
+		DB_CONN.closeStatement();
 		fechaConexao();
-		
 	}
 	
 	public void deletePointWhere(String tableName, String columnName, String operator, double condition) throws SQLException, DBConnectionException{
