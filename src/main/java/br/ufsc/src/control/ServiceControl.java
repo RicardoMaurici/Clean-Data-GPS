@@ -137,8 +137,9 @@ public class ServiceControl {
 		}	
 	}
 
-	public void removeNoise(ConfigTraj configTraj) throws AddBatchException, ExecuteBatchException {
+	public void removeNoise(ConfigTraj configTraj) throws AddBatchException, ExecuteBatchException, DBConnectionException, SQLException {
 		Set<Integer> tids = null;
+		configTraj.setTableNameOrigin(createTableNoise(configTraj));
 		RemoveNoise removeNoise = new RemoveNoise(persistencia, configTraj);
 		try {
 			tids = persistencia.fetchTIDS(configTraj.getColumnName("TID"), configTraj.getTableNameOrigin());
@@ -149,6 +150,35 @@ public class ServiceControl {
 			e.printStackTrace();
 		}
 	}
+	
+	private String createTableNoise(ConfigTraj configTraj) throws DBConnectionException, SQLException{
+		String newTableName = configTraj.getTableNameOrigin()+"_removedNoise_";
+		if(configTraj.isRemoveNoiseFromFirst()){
+			newTableName += "fromfirst_"+configTraj.getSpeed().replace(".", "dot");
+		}else if(configTraj.isRemoveNoiseFromSecond()){
+			newTableName += "fromsecond_"+configTraj.getSpeed().replace(".", "dot");
+		}else if(configTraj.isDbscan()){
+			String dist =  configTraj.getDistancePoints()+"";
+			dist = dist.replace(".", "dot");
+			if(configTraj.isRemoveNeighborNoise())
+				newTableName += "dbscan_neighbor_"+configTraj.getMinPoints()+"_"+dist;
+			else
+				newTableName += "dbscan_"+configTraj.getMinPoints()+"_"+dist;
+		}else if(configTraj.isMeanFilter()){
+			if(configTraj.isPastPoints())
+				newTableName += "mean_pastpoints_"+configTraj.getNumWindowPoints();
+			else
+				newTableName += "mean_"+configTraj.getNumWindowPoints();
+		}else if(configTraj.isMedianFilter()){
+			if(configTraj.isPastPoints())
+				newTableName += "median_pastpoints_"+configTraj.getNumWindowPoints();
+			else
+				newTableName += "median_"+configTraj.getNumWindowPoints();
+		}
+		persistencia.createTableFromAnother(configTraj.getTableNameOrigin(),newTableName);
+		return newTableName;
+	}
+	
 
 	public void exportTable(String path, String table) throws DBConnectionException, SQLException {
 		persistencia.exportTable(path,table);

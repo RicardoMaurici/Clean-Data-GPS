@@ -348,13 +348,19 @@ public class Persistencia implements InterfacePersistencia {
 	}
 
 	public Trajectory fetchTrajectory(Integer tid, ConfigTraj configTraj, String columnTID) throws DBConnectionException, SQLException {
-		String sql = "SELECT "+configTraj.getColumnName("GID")+" as gid,"+
+	/*	String sql = "SELECT "+configTraj.getColumnName("GID")+" as gid,"+
 					columnTID+" as tid,"+
 					configTraj.getColumnName("TIMESTAMP")+" as timestamp,st_x("+
-					configTraj.getColumnName("GEOM")+") as lon,st_y(geom) as lat";
+					configTraj.getColumnName("GEOM")+") as lon,st_y("+
+					configTraj.getColumnName("GEOM")+") as lat";
 				sql += configTraj.isStatus() ? ","+configTraj.getColumnName("BOOLEAN STATUS") : "";
 				sql += " from "+ configTraj.getTableNameOrigin()+
-				" where "+columnTID+"="+tid+" order by "+columnTID+","+configTraj.getColumnName("TIMESTAMP")+";";
+				" where "+columnTID+"="+tid+" order by "+columnTID+","+configTraj.getColumnName("TIMESTAMP")+";";*/
+		String sql = "SELECT gid, tid, timestamp,st_x(GEOM) as lon,st_y(geom) as lat";
+			sql += configTraj.isStatus() ? ","+configTraj.getColumnName("BOOLEAN STATUS") : "";
+			sql += " from "+ configTraj.getTableNameOrigin()+
+			" where "+columnTID+"="+tid+" order by "+columnTID+",timestamp;";
+
 		abraConexao();
 		ResultSet resultSet = DB_CONN.executeQuery(sql);
 		Trajectory result = new Trajectory(tid);
@@ -479,6 +485,14 @@ public class Persistencia implements InterfacePersistencia {
 		} catch (DBConnectionException e) {
 		}
 		return rt;
+	}
+
+	@Override
+	public void createTableFromAnother(String tableNameOrigin, String newTableName) throws DBConnectionException, SQLException {
+		String sql = "CREATE TABLE "+newTableName+" AS SELECT * FROM "+tableNameOrigin+";";
+		abraConexao();
+		DB_CONN.execute(sql);
+		fechaConexao();
 	}
 	
 }
