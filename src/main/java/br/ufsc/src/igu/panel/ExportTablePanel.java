@@ -27,9 +27,9 @@ public class ExportTablePanel extends AbstractPanel{
 
 		
 		private static final long serialVersionUID = 1L;
-		private JLabel diretorioLabel, tableLabel;
-		private JTextField diretorioTf, tableTF;
-		private JButton diretorioBtn, tableBtn;
+		private JLabel dirLabel, tableLabel, t1,t2;
+		private JTextField dirTf, tableTF;
+		private JButton dirBtn, tableBtn;
 		private JTable table1;
 		private JScrollPane table;
 
@@ -44,17 +44,15 @@ public class ExportTablePanel extends AbstractPanel{
 			
 			processButton.setBackground(Color.DARK_GRAY);
 			
-			diretorioLabel = new JLabel("Local");
-			diretorioTf = new JTextField();
-			diretorioBtn = new JButton("Select");
-			diretorioBtn.addActionListener(this);
+			dirLabel = new JLabel("  Directory  ");
+			dirTf = new JTextField();
+			dirBtn = new JButton("Select");
+			dirBtn.addActionListener(this);
 			
 			tableLabel = new JLabel("Table name");
 			tableTF = new JTextField();
-			tableBtn = new JButton("Find");
+			tableBtn = new JButton(" Find ");
 			tableBtn.addActionListener(this);
-			
-			tableTF.setText("traj_ricardo3");
 			
 			Object [] columnNames = new Object[]{ "Column"};
 	        Object [][] data        = new Object[][]{};
@@ -63,6 +61,9 @@ public class ExportTablePanel extends AbstractPanel{
 	        table1 = new JTable(tab);
 	        table = new JScrollPane(table1);
 	        table1.setRowHeight( 25 );
+	        
+	        t1 = new JLabel("");
+	        t2 = new JLabel("");
 		}
 		
 		@Override
@@ -76,27 +77,40 @@ public class ExportTablePanel extends AbstractPanel{
 			layout.setHorizontalGroup(layout
 					.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(LEADING)
-							.addComponent(diretorioLabel)
-							.addComponent(tableLabel))
-					.addGroup(layout.createParallelGroup(LEADING)
-							.addComponent(diretorioTf)
-							.addComponent(tableTF)
-							.addComponent(table)
-					)
-					.addGroup(layout.createParallelGroup(LEADING)
-							.addComponent(diretorioBtn)
-							.addComponent(tableBtn)
-							.addComponent(processButton)
+							.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(dirLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(dirTf))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(dirBtn))
 							)
-
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(tableLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(tableTF))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(tableBtn))
+						)
+						.addComponent(table)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(t1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(t2, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(processButton)
+								))
+					)
 			);
 
 			layout.setVerticalGroup(layout
 					.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(BASELINE)
-							.addComponent(diretorioLabel)
-							.addComponent(diretorioTf)
-							.addComponent(diretorioBtn))
+							.addComponent(dirLabel)
+							.addComponent(dirTf)
+							.addComponent(dirBtn))
 					.addGroup(layout.createParallelGroup(BASELINE)
 							.addComponent(tableLabel)
 							.addComponent(tableTF)
@@ -104,19 +118,21 @@ public class ExportTablePanel extends AbstractPanel{
 					.addGroup(layout.createParallelGroup(BASELINE)
 							.addComponent(table))
 					.addGroup(layout.createParallelGroup(BASELINE)
+							.addComponent(t1)
+							.addComponent(t2)
 							.addComponent(processButton))
 			);
 			
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == diretorioBtn) {
+			if (e.getSource() == dirBtn) {
 				JFileChooser fc = new JFileChooser();
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setAcceptAllFileFilterUsed(true);
 				int returnVal = fc.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION)
-					diretorioTf.setText(fc.getSelectedFile().getAbsolutePath());
+					dirTf.setText(fc.getSelectedFile().getAbsolutePath());
 			}else if(e.getSource() == tableBtn){
 				try {
 					if(tableTF.getText().length() != 0){
@@ -141,7 +157,7 @@ public class ExportTablePanel extends AbstractPanel{
 				if(checkDataFromWindow()){
 					try {
 						long startTime = System.currentTimeMillis();
-						control.exportTable(diretorioTf.getText(), tableTF.getText());   
+						control.exportTable(dirTf.getText(), tableTF.getText());   
 						long endTime   = System.currentTimeMillis();
 						long totalTime = endTime - startTime;
 						JOptionPane.showMessageDialog(null, "Export table\n"+Utils.getDurationBreakdown(totalTime),
@@ -158,15 +174,15 @@ public class ExportTablePanel extends AbstractPanel{
 		
 		private boolean checkDataFromWindow(){
 			try{
-				File file = new File(diretorioTf.getText());
+				File file = new File(dirTf.getText());
 				if(!file.isDirectory()){
 					JOptionPane.showMessageDialog(null,"Path should be a folder: ","Export table", JOptionPane.ERROR_MESSAGE);
-					diretorioTf.requestFocus(true);
+					dirTf.requestFocus(true);
 					return false;
 				}
 			}catch(Exception e){
 				JOptionPane.showMessageDialog(null,"Path should be a folder: ","Export table", JOptionPane.ERROR_MESSAGE);
-				diretorioTf.requestFocus(true);
+				dirTf.requestFocus(true);
 			}
 			return true;
 		}
