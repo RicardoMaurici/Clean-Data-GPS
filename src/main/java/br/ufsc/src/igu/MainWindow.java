@@ -12,7 +12,7 @@ import javax.swing.UIManager;
 
 import br.ufsc.src.control.ServiceControl;
 import br.ufsc.src.igu.panel.AbstractPanel;
-import br.ufsc.src.igu.panel.BrokeTrajectory;
+import br.ufsc.src.igu.panel.BrokeTrajectoryPanel;
 import br.ufsc.src.igu.panel.LoadPanelDSV;
 import br.ufsc.src.igu.panel.RemoveNoisePanel;
 import br.ufsc.src.igu.panel.TrajNearPointPanel;
@@ -75,7 +75,7 @@ public class MainWindow extends JFrame implements ActionListener {
 			panel = new LoadPanel(control);
 			break;
 		case OPTIONDBROKETRAJECTORY:
-			panel = new BrokeTrajectory(control);
+			panel = new BrokeTrajectoryPanel(control);
 			break;
 		case OPTIONREMOVENOISE:
 			panel = new RemoveNoisePanel(control);

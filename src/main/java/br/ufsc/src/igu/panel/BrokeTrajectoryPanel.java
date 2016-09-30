@@ -30,7 +30,7 @@ import br.ufsc.src.persistencia.exception.AddColumnException;
 import br.ufsc.src.persistencia.exception.DBConnectionException;
 import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 
-public class BrokeTrajectory extends AbstractPanel{
+public class BrokeTrajectoryPanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
 	private JLabel tableLabel, sampleTimeLabel, speedLabel, accuracyLabel, distanceLabel;
@@ -40,7 +40,7 @@ public class BrokeTrajectory extends AbstractPanel{
 	private JScrollPane table;
 	private JCheckBox booleanStatusCB;
 
-	public BrokeTrajectory(ServiceControl controle) {
+	public BrokeTrajectoryPanel(ServiceControl controle) {
 		
 		super("Data Clean - Broke Trajectory", controle, new JButton("Start"));
 		defineComponents();
@@ -94,37 +94,30 @@ public class BrokeTrajectory extends AbstractPanel{
 		layout.setHorizontalGroup(layout
 				.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableLabel))
-				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableTF)
-						.addComponent(table)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(accuracyLabel)
-										.addComponent(speedLabel)
-								)
+									.addComponent(tableLabel))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(accuracyTF)
-										.addComponent(speedTF)
-								)
+										.addComponent(tableTF))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(sampleTimeLabel)
-										.addComponent(distanceLabel)
-								)
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(sampleTimeTF)
-										.addComponent(distanceTF)
-								)
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(booleanStatusCB)
-								)
-								
+										.addComponent(tableBtn))
 						)
-				)
-				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableBtn)
-						.addComponent(processButton)
+						.addComponent(table)
+						.addGroup(layout.createSequentialGroup()
+								.addComponent(accuracyLabel)
+								.addComponent(accuracyTF)
+								.addComponent(distanceLabel)
+								.addComponent(distanceTF)
+								.addComponent(booleanStatusCB)
 						)
+						.addGroup(layout.createSequentialGroup()
+								.addComponent(speedLabel)
+								.addComponent(speedTF)
+								.addComponent(sampleTimeLabel)
+								.addComponent(sampleTimeTF)
+								.addComponent(processButton)
+						)	
+			)
 
 		);
 
@@ -137,24 +130,19 @@ public class BrokeTrajectory extends AbstractPanel{
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(table))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addGroup(layout.createParallelGroup()
-								.addComponent(accuracyLabel)
-								.addComponent(accuracyTF)
-								.addComponent(sampleTimeLabel)
-								.addComponent(sampleTimeTF)
-								.addComponent(booleanStatusCB)
-						)
+						.addComponent(accuracyLabel)
+						.addComponent(accuracyTF)
+						.addComponent(distanceLabel)
+						.addComponent(distanceTF)
+						.addComponent(booleanStatusCB)
 				)
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addGroup(layout.createParallelGroup()
-								.addComponent(speedLabel)
-								.addComponent(speedTF)
-								.addComponent(distanceLabel)
-								.addComponent(distanceTF)
-						)
+						.addComponent(speedLabel)
+						.addComponent(speedTF)
+						.addComponent(sampleTimeLabel)
+						.addComponent(sampleTimeTF)
+						.addComponent(processButton)
 				)
-				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(processButton))
 		);
 		
 	}
@@ -319,5 +307,5 @@ public class BrokeTrajectory extends AbstractPanel{
 		}
 		return false;
 	}
-
+	
 }
