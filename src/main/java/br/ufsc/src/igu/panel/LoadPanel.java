@@ -65,7 +65,7 @@ import br.ufsc.src.persistencia.fonte.TrajetoriaBruta;
 public class LoadPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel dirLabel, igFileLabel, extLabel, igDirLabel, sridLabel, sridNewLabel, tableLabel, t1,t2,t3;
+	private JLabel dirLabel, igFileLabel, extLabel, igDirLabel, sridLabel, sridNewLabel, tableLabel, t1,t2,t3,t4,t5,t6;
 	private JTextField dirTf, igFileTf, igDirTf, extTf, tableDBTf, sridTf, sridNewTf ;
 	private JButton dirBtn;
 	private JCheckBox addMetadata, igExt, tid, gid;
@@ -108,9 +108,12 @@ public class LoadPanel extends AbstractPanel {
 		dirBtn.setToolTipText("Click to select a directory/file");
 		processButton.setToolTipText("Click to load");
 		
-		t1 = new JLabel("    ");
-		t2 = new JLabel("                                 ");
-		t3 = new JLabel("              ");
+		t1 = new JLabel("");
+		t2 = new JLabel("");
+		t3 = new JLabel("");
+		t4 = new JLabel("");
+		t5 = new JLabel("");
+		t6 = new JLabel("");
 	}
 
 	public void adjustComponents() {
@@ -163,26 +166,30 @@ public class LoadPanel extends AbstractPanel {
 										.addComponent(igExt))
 						)
 						.addGroup(layout.createSequentialGroup()
-								.addGroup(layout.createSequentialGroup()
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(t3))
+											.addComponent(t3, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 									.addGroup(layout.createParallelGroup(LEADING)
 											.addComponent(addMetadata))
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(t1)))
-								.addGroup(layout.createSequentialGroup()
+											.addComponent(t1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(gid)))
-									
-								.addGroup(layout.createSequentialGroup()
+											.addComponent(gid))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(t2, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 									.addGroup(layout.createParallelGroup(LEADING)
 											.addComponent(tid))
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(t2)))
-								.addGroup(layout.createSequentialGroup()
-									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(processButton)))
+											.addComponent(t6, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+									
 						)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(t4, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(t5, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(processButton)
+								))
 				)
 		);
 
@@ -211,8 +218,12 @@ public class LoadPanel extends AbstractPanel {
 						.addComponent(addMetadata)
 						.addComponent(t1)
 						.addComponent(gid)
-						.addComponent(tid)
 						.addComponent(t2)
+						.addComponent(tid)
+						.addComponent(t6))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(t4)
+						.addComponent(t5)
 						.addComponent(processButton))
 				);	
 	}
