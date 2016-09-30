@@ -3,6 +3,7 @@ package br.ufsc.src.igu.panel;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 import javax.swing.GroupLayout;
@@ -11,6 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import org.jdesktop.swingx.JXSearchField.LayoutStyle;
+
+import javax.swing.GroupLayout.Alignment;
 
 import br.ufsc.src.control.ServiceControl;
 
@@ -51,11 +56,8 @@ public class ConnectionPanel extends AbstractPanel {
 								.addComponent(userTf)
 								.addComponent(passwordTf)
 								.addComponent(bancoTf)
-								.addComponent(processButton))
-								
+								.addComponent(processButton))			
 				);
-
-		layout.linkSize(SwingConstants.HORIZONTAL,processButton);
 
 		layout.setVerticalGroup(layout
 				.createSequentialGroup()
@@ -87,8 +89,9 @@ public class ConnectionPanel extends AbstractPanel {
 
 	@Override
 	public void defineComponents() {
-		driverLabel = new JLabel("Driver Postgres:");
-		urlLabel = new JLabel("URL:");
+		processButton.setBackground(Color.DARK_GRAY);
+		driverLabel = new JLabel("Driver Postgres");
+		urlLabel = new JLabel("URL");
 		senhaLabel = new JLabel("Password");
 		usuarioLabel = new JLabel("User");
 		bancoLabel = new JLabel("Database");
