@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -91,33 +92,32 @@ public class TrajNearPointPanel extends AbstractPanel{
 		layout.setHorizontalGroup(layout
 				.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableLabel))
-				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableTF)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+									.addComponent(tableLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(tableTF))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(tableBtn))
+						)
 						.addComponent(table)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(longitudeLabel)
-										.addComponent(distanceLabel)
-								)
+										.addComponent(longitudeLabel))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(longitudeTF)
-										.addComponent(distanceTF)
-								)
+										.addComponent(longitudeTF))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(latitudeLabel)
-								)
+										.addComponent(latitudeLabel))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(latitudeTF)
-								)
-								
-						)
+										.addComponent(latitudeTF))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(distanceLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(distanceTF))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(processButton))	
+						)		
 				)
-				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableBtn)
-						.addComponent(processButton)
-						)
-
 		);
 
 		layout.setVerticalGroup(layout
@@ -129,21 +129,16 @@ public class TrajNearPointPanel extends AbstractPanel{
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(table))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addGroup(layout.createParallelGroup()
+						.addGroup(layout.createParallelGroup(Alignment.CENTER)
 								.addComponent(longitudeLabel)
 								.addComponent(longitudeTF)
 								.addComponent(latitudeLabel)
 								.addComponent(latitudeTF)
-						)
-				)
-				.addGroup(layout.createParallelGroup(BASELINE)
-						.addGroup(layout.createParallelGroup()
 								.addComponent(distanceLabel)
 								.addComponent(distanceTF)
+								.addComponent(processButton)
 						)
-				)
-				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(processButton))
+				)	
 		);
 		
 	}
@@ -283,5 +278,70 @@ public class TrajNearPointPanel extends AbstractPanel{
 		}
 		return false;
 	}
+/*
+ 
+  GroupLayout layout = new GroupLayout(this);
+		this.setLayout(layout);
 
+		layout.setAutoCreateGaps(true);
+		layout.setAutoCreateContainerGaps(true);
+		layout.setHorizontalGroup(layout
+				.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(LEADING)
+						.addComponent(tableLabel))
+				.addGroup(layout.createParallelGroup(LEADING)
+						.addComponent(tableTF)
+						.addComponent(table)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(longitudeLabel)
+										.addComponent(distanceLabel)
+								)
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(longitudeTF)
+										.addComponent(distanceTF)
+								)
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(latitudeLabel)
+								)
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(latitudeTF)
+								)
+								
+						)
+				)
+				.addGroup(layout.createParallelGroup(LEADING)
+						.addComponent(tableBtn)
+						.addComponent(processButton)
+						)
+
+		);
+
+		layout.setVerticalGroup(layout
+				.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(tableLabel)
+						.addComponent(tableTF)
+						.addComponent(tableBtn))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(table))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addGroup(layout.createParallelGroup()
+								.addComponent(longitudeLabel)
+								.addComponent(longitudeTF)
+								.addComponent(latitudeLabel)
+								.addComponent(latitudeTF)
+						)
+				)
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addGroup(layout.createParallelGroup()
+								.addComponent(distanceLabel)
+								.addComponent(distanceTF)
+						)
+				)
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(processButton))
+		);
+ 
+   */
 }
