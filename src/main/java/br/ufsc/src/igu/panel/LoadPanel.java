@@ -20,6 +20,7 @@ import javax.swing.AbstractButton;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -64,10 +65,10 @@ import br.ufsc.src.persistencia.fonte.TrajetoriaBruta;
 public class LoadPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JLabel diretorioLabel, igArqLabel, extLabel, igDirLabel, sridAtualLabel, sridNovoLabel, tabelaLabel;
-	private JTextField diretorioTf, igArqTf, igDirTf, extTf, tabelaBancoTf, sridAtualTf, sridNovoTf ;
-	private JButton diretorioBtn;
-	private JCheckBox incluirMetadados, igExt, tid, gid;
+	private JLabel dirLabel, igFileLabel, extLabel, igDirLabel, sridLabel, sridNewLabel, tableLabel, t1,t2,t3;
+	private JTextField dirTf, igFileTf, igDirTf, extTf, tableDBTf, sridTf, sridNewTf ;
+	private JButton dirBtn;
+	private JCheckBox addMetadata, igExt, tid, gid;
 	
 	public LoadPanel(ServiceControl controle) {
 		super("Load JSON/GPX/KML/WKT files", controle, new JButton("Load"));
@@ -76,42 +77,40 @@ public class LoadPanel extends AbstractPanel {
 	}
 
 	public void defineComponents() {
-		diretorioLabel = new JLabel("Dir/File");
-		sridAtualLabel = new JLabel("SRID");
-		sridNovoLabel = new JLabel("new SRID");
-		tabelaLabel = new JLabel("Table name");
-		igArqLabel = new JLabel("Ig. Files");
+		dirLabel = new JLabel("Direc/File ");
+		sridLabel = new JLabel("Data SRID");
+		sridNewLabel = new JLabel("New SRID");
+		tableLabel = new JLabel("Table name");
+		igFileLabel = new JLabel("Ign. Files");
 		extLabel = new JLabel("Ext.");
-		igDirLabel = new JLabel("Ig. dir.");
-
-		diretorioTf = new JTextField();
-		tabelaBancoTf = new JTextField();
-		sridAtualTf = new JTextField();
-		sridNovoTf = new JTextField();
-		igArqTf = new JTextField();
+		igDirLabel = new JLabel("Ign.   dir. ");
+		dirTf = new JTextField();
+		tableDBTf = new JTextField();
+		sridTf = new JTextField();
+		sridNewTf = new JTextField();
+		igFileTf = new JTextField();
 		igDirTf = new JTextField();
 		extTf = new JTextField();
 		
-		diretorioBtn = new JButton("Select");
+		dirBtn = new JButton("Select");
 
-		incluirMetadados = new JCheckBox("Add Metadata");
-		igExt = new JCheckBox("Ignore");
+		addMetadata = new JCheckBox("Add Metadata");
+		igExt = new JCheckBox("Ignore extensions");
 		tid = new JCheckBox("Generate TID");
 		gid = new JCheckBox("Generate GID");
 		
 		extTf.setText("pdf,zip,txt,csv,tsv");
 		igExt.setSelected(true);
 
-		diretorioBtn.addActionListener(this);
+		dirBtn.addActionListener(this);
 
 		processButton.setBackground(Color.DARK_GRAY);
-		diretorioBtn
-				.setToolTipText("Click to select a directory/file");
+		dirBtn.setToolTipText("Click to select a directory/file");
 		processButton.setToolTipText("Click to load");
 		
-		diretorioTf.setText("/Users/rogerjames/Desktop/testes/");
-		sridAtualTf.setText("2100");
-		sridNovoTf.setText("900913");
+		t1 = new JLabel("    ");
+		t2 = new JLabel("                                 ");
+		t3 = new JLabel("              ");
 	}
 
 	public void adjustComponents() {
@@ -122,162 +121,139 @@ public class LoadPanel extends AbstractPanel {
 		layout.setAutoCreateContainerGaps(true);
 		layout.setHorizontalGroup(layout
 				.createSequentialGroup()
-				.addGroup(
-						layout.createParallelGroup(LEADING)
-								.addComponent(diretorioLabel))
-				.addGroup(
-						layout.createParallelGroup(LEADING)
-								.addComponent(diretorioTf)
-								.addGroup(
-										layout.createSequentialGroup()
-												.addGroup(
-														layout.createParallelGroup(
-																LEADING)													
-																.addComponent(
-																		sridAtualLabel)
-																.addComponent(
-																		extLabel)
-																.addComponent(
-																		igDirLabel)
-																.addComponent(
-																		tabelaLabel))
-												.addGroup(
-														layout.createParallelGroup(
-																LEADING)
-																.addComponent(
-																		sridAtualTf)
-																.addComponent(
-																		extTf)
-																.addComponent(
-																		igDirTf)
-																.addComponent(
-																		tabelaBancoTf)
-																.addComponent(gid))
-												.addGroup(
-														layout.createParallelGroup(
-																LEADING)
-																.addComponent(
-																		sridNovoLabel)
-																.addComponent(
-																		igExt)
-																.addComponent(
-																		igArqLabel)
-																.addComponent(
-																		incluirMetadados))
-												.addGroup(
-														layout.createParallelGroup(
-																LEADING)
-																.addComponent(
-																		sridNovoTf)
-																.addComponent(
-																		igArqTf)
-																.addComponent(tid))
-																)
+				.addGroup(layout.createParallelGroup(LEADING)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+									.addComponent(dirLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(dirTf))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(dirBtn))
 						)
-						
-				.addGroup(
-						layout.createParallelGroup(LEADING)
-								.addComponent(diretorioBtn)
-								.addComponent(processButton)));
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createSequentialGroup()
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(sridLabel))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(sridTf))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(sridNewLabel))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(sridNewTf)))
+								.addGroup(layout.createSequentialGroup()
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(tableLabel))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(tableDBTf)))
+						)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(igDirLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(igDirTf))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(igFileLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(igFileTf))	
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(extLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(extTf))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(igExt))
+						)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createSequentialGroup()
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(t3))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(addMetadata))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(t1)))
+								.addGroup(layout.createSequentialGroup()
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(gid)))
+									
+								.addGroup(layout.createSequentialGroup()
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(tid))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(t2)))
+								.addGroup(layout.createSequentialGroup()
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(processButton)))
+						)
+				)
+		);
 
-		layout.linkSize(SwingConstants.HORIZONTAL, processButton, diretorioBtn);
-
-		layout.setVerticalGroup(layout
-				.createSequentialGroup()
-				.addGroup(
-						layout.createParallelGroup(BASELINE)
-								.addComponent(diretorioLabel)
-								.addComponent(diretorioTf)
-								.addComponent(diretorioBtn))
-				.addGroup(
-						layout.createParallelGroup(LEADING)
-								.addGroup(
-										layout.createSequentialGroup()								
-												.addGroup(
-														layout.createParallelGroup(
-																BASELINE)
-																.addComponent(
-																		sridAtualLabel)
-																.addComponent(
-																		sridAtualTf)
-																.addComponent(
-																		sridNovoLabel)
-																.addComponent(
-																		sridNovoTf))
-												.addGroup(
-														layout.createParallelGroup(
-																BASELINE)
-																.addComponent(
-																		extLabel)
-																.addComponent(
-																		extTf)
-																.addComponent(
-																		igExt))
-												.addGroup(
-														layout.createParallelGroup(
-																BASELINE)
-																.addComponent(
-																		igDirLabel)
-																.addComponent(
-																		igDirTf)
-																.addComponent(
-																		igArqLabel)
-																.addComponent(
-																		igArqTf))
-												.addGroup(
-														layout.createParallelGroup(
-																BASELINE)
-																.addComponent(
-																		tabelaLabel)
-																.addComponent(
-																		tabelaBancoTf)
-																.addComponent(
-																		incluirMetadados))
-												.addGroup(layout.createParallelGroup(BASELINE)
-																.addComponent(gid)
-																.addComponent(tid))
-												)
-								.addComponent(processButton))
-				);
+		layout.setVerticalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(dirLabel)
+						.addComponent(dirTf)
+						.addComponent(dirBtn))								
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(sridLabel)
+						.addComponent(sridTf)
+						.addComponent(sridNewLabel)
+						.addComponent(sridNewTf)
+						.addComponent(tableLabel)
+						.addComponent(tableDBTf))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(igDirLabel)
+						.addComponent(igDirTf)
+						.addComponent(igFileLabel)
+						.addComponent(igFileTf)
+						.addComponent(extLabel)
+						.addComponent(extTf)
+						.addComponent(igExt))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(t3)
+						.addComponent(addMetadata)
+						.addComponent(t1)
+						.addComponent(gid)
+						.addComponent(tid)
+						.addComponent(t2)
+						.addComponent(processButton))
+				);	
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == diretorioBtn) {
+		if (e.getSource() == dirBtn) {
 			JFileChooser fc = new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			fc.setAcceptAllFileFilterUsed(true);
 			int returnVal = fc.showOpenDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
-				diretorioTf.setText(fc.getSelectedFile().getAbsolutePath());
+				dirTf.setText(fc.getSelectedFile().getAbsolutePath());
 		}else if (e.getSource() == processButton) {
 			if (!control.testConnection())
 				JOptionPane.showMessageDialog(null, "PAUUUU",
 						"DB connection", JOptionPane.ERROR_MESSAGE);
 			else {	
-				if (verificaEntradas()) {
-					String inLocal = diretorioTf.getText();
-					String inTabela = tabelaBancoTf.getText();
-					boolean inMetadata = incluirMetadados.isSelected();
+				if (checkInputs()) {
+					String inLocal = dirTf.getText();
+					String inTabela = tableDBTf.getText();
+					boolean inMetadata = addMetadata.isSelected();
 					boolean inGID = gid.isSelected();
 					boolean inTID = tid.isSelected();
 					int inSRIDAtual, inSRIDNovo = 0;
 					try{
-						inSRIDAtual = Integer.parseInt(sridAtualTf.getText());
+						inSRIDAtual = Integer.parseInt(sridTf.getText());
 					}catch(NumberFormatException ex){
 						JOptionPane.showMessageDialog(null,
-								"SRID n�o � um n�mero, informe o SRID somente em n�meros",
-								"Carregar documento", JOptionPane.ERROR_MESSAGE);
-						sridAtualTf.requestFocus(true);
+								"SRID not a number, SRID should be a number",
+								"Load File", JOptionPane.ERROR_MESSAGE);
+						sridTf.requestFocus(true);
 						return;
 					}
-					if(sridNovoTf.getText().length() != 0){
+					if(sridNewTf.getText().length() != 0){
 						try{
-							inSRIDNovo = Integer.parseInt(sridNovoTf.getText());
+							inSRIDNovo = Integer.parseInt(sridNewTf.getText());
 						}catch(NumberFormatException ex){
 							JOptionPane.showMessageDialog(null,
-									"SRID n�o � um n�mero, informe o SRID somente em n�meros",
-									"Carregar documento", JOptionPane.ERROR_MESSAGE);
-							sridNovoTf.requestFocus(true);
+									"SRID not a number, SRID should be a number",
+									"Load File", JOptionPane.ERROR_MESSAGE);
+							sridNewTf.requestFocus(true);
 							return;
 						}
 					}else
@@ -286,7 +262,7 @@ public class LoadPanel extends AbstractPanel {
 					String inExt = (extTf.getText().length() > 0 ) ? extTf.getText() : null;
 					boolean inIgExt = igExt.isSelected();
 					String inIgDir = (igDirTf.getText().length() > 0) ? igDirTf.getText() : null;
-					String inIgArq = (igArqTf.getText().length() > 0) ? igArqTf.getText() : null;
+					String inIgArq = (igFileTf.getText().length() > 0) ? igFileTf.getText() : null;
 					
 					Object [][] tableColumns        = new Object[][]{
 						{"tid",  "", EnumTypes.NUMERIC.toString(),""}
@@ -297,21 +273,21 @@ public class LoadPanel extends AbstractPanel {
 					};
 
 					TrajetoriaBruta tb = new TrajetoriaBruta(0, null, null, null, inTabela, inSRIDAtual, inSRIDNovo, inMetadata, tableColumns, inGID, inTID);
-					Diretorio dir = definicoesDiretorio(inLocal, inExt, inIgExt, inIgDir, inIgArq);
+					Diretorio dir = directoryDefinitions(inLocal, inExt, inIgExt, inIgDir, inIgArq);
 				
 					try {
 						control.createTable(tb); 
 					} catch (SyntaxException e1){
 						JOptionPane.showMessageDialog(null,e1.getMsg(),"Loading data", JOptionPane.ERROR_MESSAGE);
-						tabelaBancoTf.requestFocus(true);
+						tableDBTf.requestFocus(true);
 						return;
 					} catch (CreateTableException e1) {
 						JOptionPane.showMessageDialog(null,"Error creating table: "+e1.getMsg(),"Loading data", JOptionPane.ERROR_MESSAGE);
-						tabelaBancoTf.requestFocus(true);
+						tableDBTf.requestFocus(true);
 						return;
 					} catch (DBConnectionException e1) {
 						JOptionPane.showMessageDialog(null,"Error connecting to DB: "+e1.getMsg(),"Loading data", JOptionPane.ERROR_MESSAGE);
-						tabelaBancoTf.requestFocus(true);
+						tableDBTf.requestFocus(true);
 						return;
 					}
 					
@@ -360,7 +336,7 @@ public class LoadPanel extends AbstractPanel {
 		}
 	}
 
-	private Diretorio definicoesDiretorio(String url, String inExt, boolean inIgExt,
+	private Diretorio directoryDefinitions(String url, String inExt, boolean inIgExt,
 			String inIgDir, String inIgArq) {
 		Diretorio dir = new Diretorio();
 		String igExt[] = (inExt == null) ? new String[0] : inExt.split(",");
@@ -374,26 +350,26 @@ public class LoadPanel extends AbstractPanel {
 		return dir;
 	}
 
-	private boolean verificaEntradas() {
-		if (diretorioTf.getText().length() == 0) {
+	private boolean checkInputs() {
+		if (dirTf.getText().length() == 0) {
 			JOptionPane.showMessageDialog(null,
-					"Informe o diret�rio ou arquivo a ser carregado",
-					"Carregar documento", JOptionPane.ERROR_MESSAGE);
-			diretorioTf.requestFocus(true);
+					"Directory or file to be load",
+					"Load File", JOptionPane.ERROR_MESSAGE);
+			dirTf.requestFocus(true);
 			return false;
-		}else if (tabelaBancoTf.getText().length() == 0) {
+		}else if (tableDBTf.getText().length() == 0) {
 			JOptionPane
 					.showMessageDialog(
 							null,
-							"Informe o nome da tabela no banco de dados que os dados ser�o inseridos",
-							"Carregar documento", JOptionPane.ERROR_MESSAGE);
-			tabelaBancoTf.requestFocus(true);
+							"Input the table name to be create in the database",
+							"Load File", JOptionPane.ERROR_MESSAGE);
+			tableDBTf.requestFocus(true);
 			return false;
-		} else if (sridAtualTf.getText().length() == 0) {
+		} else if (sridTf.getText().length() == 0) {
 			JOptionPane.showMessageDialog(null,
-					"Informe o SRID das coordenadas", "Carregar documento",
+					"You should tell the SRID to coordinates", "Load File",
 					JOptionPane.ERROR_MESSAGE);
-			sridAtualTf.requestFocus(true);
+			sridTf.requestFocus(true);
 			return false;
 		}
 		return true;
