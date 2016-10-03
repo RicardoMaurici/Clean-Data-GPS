@@ -77,13 +77,13 @@ public class LoadPanel extends AbstractPanel {
 	}
 
 	public void defineComponents() {
-		dirLabel = new JLabel("Direc/File ");
+		dirLabel = new JLabel("Directory/File");
 		sridLabel = new JLabel("Data SRID");
-		sridNewLabel = new JLabel("New SRID");
+		sridNewLabel = new JLabel("  New SRID");
 		tableLabel = new JLabel("Table name");
-		igFileLabel = new JLabel("Ign. Files");
-		extLabel = new JLabel("Ext.");
-		igDirLabel = new JLabel("Ign.   dir. ");
+		igFileLabel = new JLabel("Ignore files");
+		extLabel = new JLabel("Extensions");
+		igDirLabel = new JLabel("Ign. folders");
 		dirTf = new JTextField();
 		tableDBTf = new JTextField();
 		sridTf = new JTextField();
@@ -136,32 +136,36 @@ public class LoadPanel extends AbstractPanel {
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createSequentialGroup()
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(sridLabel))
+											.addComponent(tableLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(sridTf))
+											.addComponent(tableDBTf, 0, GroupLayout.DEFAULT_SIZE, 300)))
+						)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createSequentialGroup()
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(sridLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
+									.addGroup(layout.createParallelGroup(LEADING)
+											.addComponent(sridTf, 0, GroupLayout.DEFAULT_SIZE, 70))
 									.addGroup(layout.createParallelGroup(LEADING)
 											.addComponent(sridNewLabel))
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(sridNewTf)))
-								.addGroup(layout.createSequentialGroup()
-									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(tableLabel))
-									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(tableDBTf)))
+											.addComponent(sridNewTf, 0, GroupLayout.DEFAULT_SIZE, 70)))
 						)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(igDirLabel))
+										.addComponent(igDirLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(igDirTf))
+										.addComponent(igDirTf, 0, GroupLayout.DEFAULT_SIZE, 200))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(igFileLabel))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(igFileTf))	
+										.addComponent(igFileTf, 0, GroupLayout.DEFAULT_SIZE, 200))	
+						)
+						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(extLabel))
+										.addComponent(extLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(extTf))
+										.addComponent(extTf, 0, GroupLayout.DEFAULT_SIZE, 200))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(igExt))
 						)
@@ -197,19 +201,21 @@ public class LoadPanel extends AbstractPanel {
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(dirLabel)
 						.addComponent(dirTf)
-						.addComponent(dirBtn))								
+						.addComponent(dirBtn))
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(tableLabel)
+						.addComponent(tableDBTf))
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(sridLabel)
 						.addComponent(sridTf)
 						.addComponent(sridNewLabel)
-						.addComponent(sridNewTf)
-						.addComponent(tableLabel)
-						.addComponent(tableDBTf))
+						.addComponent(sridNewTf))
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(igDirLabel)
 						.addComponent(igDirTf)
 						.addComponent(igFileLabel)
-						.addComponent(igFileTf)
+						.addComponent(igFileTf))
+				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(extLabel)
 						.addComponent(extTf)
 						.addComponent(igExt))

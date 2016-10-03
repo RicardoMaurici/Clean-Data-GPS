@@ -70,7 +70,7 @@ public class TrajNearPointPanel extends AbstractPanel{
 		distanceTF = new JTextField();
 		distanceTF.setToolTipText("Set distance in meters to the buffer around the point");
 		
-		Object [] columnNames = new Object[]{ "Column", "Kind" };
+		Object [] columnNames = new Object[]{ "Column", "Type description" };
         Object [][] data        = new Object[][]{};
         
         DefaultTableModel tab = new MyTableModel( data,columnNames, true );
@@ -120,8 +120,7 @@ public class TrajNearPointPanel extends AbstractPanel{
 				)
 		);
 
-		layout.setVerticalGroup(layout
-				.createSequentialGroup()
+		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(tableLabel)
 						.addComponent(tableTF)

@@ -23,7 +23,7 @@ public class ConnectionPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField driverTf, urlTf, passwordTf, userTf, bancoTf;
-	private JLabel driverLabel, urlLabel, senhaLabel, usuarioLabel, bancoLabel;
+	private JLabel driverLabel, urlLabel, senhaLabel, usuarioLabel, bancoLabel,t1;
 	private JButton testeBtn;
 
 	public ConnectionPanel(ServiceControl controle) {
@@ -41,60 +41,82 @@ public class ConnectionPanel extends AbstractPanel {
 		layout.setAutoCreateContainerGaps(true);
 		layout.setHorizontalGroup(layout
 				.createSequentialGroup()
-				.addGroup(
-						layout.createParallelGroup(LEADING)
-						.addComponent(driverLabel)
-						.addComponent(urlLabel)
-						.addComponent(usuarioLabel)
-						.addComponent(senhaLabel)
-						.addComponent(bancoLabel)
-						.addComponent(testeBtn))
-						.addGroup(
-								layout.createParallelGroup(LEADING)
-								.addComponent(driverTf)
-								.addComponent(urlTf)
-								.addComponent(userTf)
-								.addComponent(passwordTf)
-								.addComponent(bancoTf)
-								.addComponent(processButton))			
+				
+				.addGroup(layout.createParallelGroup(LEADING)
+						.addGroup(layout.createSequentialGroup()
+							.addGroup(layout.createParallelGroup(LEADING)
+									.addComponent(driverLabel))
+							.addGroup(layout.createParallelGroup(LEADING)
+									.addComponent(driverTf))
+						)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(urlLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(urlTf))
+							)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(usuarioLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(userTf))
+							)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(senhaLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(passwordTf))
+							)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(bancoLabel))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(bancoTf))
+							)
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(t1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(testeBtn))
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(processButton))
+							))		
 				);
 
 		layout.setVerticalGroup(layout
 				.createSequentialGroup()
-				.addGroup(
-						layout.createParallelGroup(BASELINE)
-						.addComponent(driverLabel)
-						.addComponent(driverTf))
-						.addGroup(
-								layout.createParallelGroup(BASELINE)
+						.addGroup(layout.createParallelGroup(BASELINE)
+								.addComponent(driverLabel)
+								.addComponent(driverTf))
+						.addGroup(layout.createParallelGroup(BASELINE)
 								.addComponent(urlLabel)
 								.addComponent(urlTf))
-								.addGroup(
-										layout.createParallelGroup(BASELINE)
-										.addComponent(usuarioLabel)
-										.addComponent(userTf))
-								.addGroup(
-										layout.createParallelGroup(BASELINE)
-										.addComponent(senhaLabel)
-										.addComponent(passwordTf))
-												.addGroup(
-														layout.createParallelGroup(BASELINE)
-														.addComponent(bancoLabel)
-														.addComponent(bancoTf))
-														.addGroup(
-																layout.createParallelGroup(BASELINE)
-																.addComponent(testeBtn)
-																.addComponent(processButton)));
+						.addGroup(layout.createParallelGroup(BASELINE)
+								.addComponent(usuarioLabel)
+								.addComponent(userTf))
+						.addGroup(layout.createParallelGroup(BASELINE)
+								.addComponent(senhaLabel)
+								.addComponent(passwordTf))
+						.addGroup(layout.createParallelGroup(BASELINE)
+								.addComponent(bancoLabel)
+								.addComponent(bancoTf))
+						.addGroup(layout.createParallelGroup(BASELINE)
+								.addComponent(t1)
+								.addComponent(testeBtn)
+								.addComponent(processButton))
+						
+			);
 	}
 
 	@Override
 	public void defineComponents() {
 		processButton.setBackground(Color.DARK_GRAY);
+		t1 =  new JLabel("");
 		driverLabel = new JLabel("Driver Postgres");
-		urlLabel = new JLabel("URL");
-		senhaLabel = new JLabel("Password");
-		usuarioLabel = new JLabel("User");
-		bancoLabel = new JLabel("Database");
+		urlLabel 	= new JLabel("URL                ");
+		senhaLabel 	= new JLabel("Password        ");
+		usuarioLabel =new JLabel("User               ");
+		bancoLabel = new  JLabel("Database        ");
 		driverTf = new JTextField();
 		urlTf = new JTextField();
 		passwordTf  = new JTextField();

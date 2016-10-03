@@ -4,6 +4,7 @@ import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -37,15 +39,14 @@ import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 public class RemoveNoisePanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel tableLabel, speedLabel, minPointsLabel, distancePointsLabel, dbscanLabel, meanMedianFilterLabel, numWindowPointsLabel;
+	private JLabel tableLabel, speedLabel, minPointsLabel, distancePointsLabel, dbscanLabel, meanMedianFilterLabel, numWindowPointsLabel, bySpeedLabel, t1,t2,t3;
 	private JTextField tableTF, speedTF, minPointsTF, distancePointsTF, numWindowPointsTF;
 	private JButton tableBtn;
 	private JTable table1;
 	private JScrollPane table;
 	private JRadioButton fromFirst, fromSecondLookingBackward, dbscanRB, meanFilterRB, medianFilterRB;
 	private JCheckBox pastPointsJC, removeNeighborNoiseJC;
-	private JSeparator sep1, sep2, sep3, sep4, sep5, sep6;
-	
+	private JSeparator sep1,sep2;
 
 	public RemoveNoisePanel(ServiceControl controle) {
 		
@@ -81,21 +82,25 @@ public class RemoveNoisePanel extends AbstractPanel{
 		speedLabel = new JLabel("Ignore speed up in m/s");
 		speedTF = new JTextField();
 		
-		dbscanLabel = new JLabel("-- DBSCAN --");
-		minPointsLabel = new JLabel("Min. Points");
+		dbscanLabel = new JLabel(" DBSCAN ");
+		dbscanLabel.setFont(new Font(null,Font.BOLD, 12));
+		minPointsLabel = new JLabel("Minimum Points");
 		minPointsTF = new JTextField();
 		minPointsTF.setToolTipText("Minimum points to DBSCAN");
-		distancePointsLabel = new JLabel("Dist. points");
+		distancePointsLabel = new JLabel("Distance points");
 		distancePointsTF = new JTextField();
 		distancePointsTF.setToolTipText("Distance between points in meters");
 		removeNeighborNoiseJC = new JCheckBox("Remove neighbor and noise");
+		bySpeedLabel = new JLabel("By Speed");
+		bySpeedLabel.setFont(new Font(null,Font.BOLD, 12));
 		
-		meanMedianFilterLabel = new JLabel("-- Mean/Median Filter --");
-		numWindowPointsLabel = new JLabel("Num. window points");
+		meanMedianFilterLabel = new JLabel(" Mean/Median Filter ");
+		meanMedianFilterLabel.setFont(new Font(null,Font.BOLD, 12));
+		numWindowPointsLabel = new JLabel("Number window points");
 		numWindowPointsTF = new JTextField();
 		pastPointsJC = new JCheckBox("Only past points");
 		
-		Object [] columnNames = new Object[]{ "Column", "Kind" };
+		Object [] columnNames = new Object[]{ "Column", "Type description" };
         Object [][] data        = new Object[][]{};
         
         DefaultTableModel tab = new MyTableModel( data,columnNames, true );
@@ -106,10 +111,9 @@ public class RemoveNoisePanel extends AbstractPanel{
         
         sep1 = new JSeparator(SwingConstants.HORIZONTAL);
 		sep2 = new JSeparator(SwingConstants.HORIZONTAL);
-		sep3 = new JSeparator(SwingConstants.HORIZONTAL);
-		sep4 = new JSeparator(SwingConstants.HORIZONTAL);
-		sep5 = new JSeparator(SwingConstants.HORIZONTAL);
-		sep6 = new JSeparator(SwingConstants.HORIZONTAL);
+		t1 = new JLabel("");
+		t2 = new JLabel("");
+		t3 = new JLabel("");
 	}
 	
 	@Override
@@ -120,54 +124,75 @@ public class RemoveNoisePanel extends AbstractPanel{
 
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
-		layout.setHorizontalGroup(layout
-				.createSequentialGroup()
+		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableLabel))
-				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableTF)
-						.addComponent(table)
-						.addGroup(layout.createSequentialGroup()
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(speedLabel)
-										.addComponent(sep1)
-										.addComponent(dbscanLabel)
-										.addComponent(minPointsLabel)
-										.addComponent(distancePointsLabel)
-										.addComponent(removeNeighborNoiseJC)
-										.addComponent(sep4)
-										.addComponent(meanMedianFilterLabel)
-										.addComponent(numWindowPointsLabel)
-										.addComponent(pastPointsJC)
-								)
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(speedTF)
-										.addComponent(sep2)
-										.addComponent(minPointsTF)
-										.addComponent(distancePointsTF)
-										.addComponent(sep5)
-										.addComponent(numWindowPointsTF)
-								)
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(fromFirst)
-										.addComponent(fromSecondLookingBackward)
-										.addComponent(sep3)
-										.addComponent(dbscanRB)
-										.addComponent(sep6)
-										.addComponent(meanFilterRB)
-										.addComponent(medianFilterRB)
-								)		
-						)
-				)
-				.addGroup(layout.createParallelGroup(LEADING)
-						.addComponent(tableBtn)
-						.addComponent(processButton)
-						)
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(tableLabel))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(tableTF))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(tableBtn))
+					)
+					.addComponent(table)
+					.addGroup(layout.createParallelGroup(LEADING)
+							.addComponent(bySpeedLabel))
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(speedLabel, 0, GroupLayout.DEFAULT_SIZE, 140))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(speedTF, 0, GroupLayout.DEFAULT_SIZE, 40))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(fromFirst)))
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(t1, 0, GroupLayout.DEFAULT_SIZE, 185))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(fromSecondLookingBackward)))
+					.addGroup(layout.createParallelGroup(LEADING)
+							.addComponent(sep1))
+					.addGroup(layout.createParallelGroup(LEADING)
+							.addComponent(dbscanLabel))
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(minPointsLabel, 0, GroupLayout.DEFAULT_SIZE, 140))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(minPointsTF, 0, GroupLayout.DEFAULT_SIZE, 40))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(dbscanRB)))
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(distancePointsLabel, 0, GroupLayout.DEFAULT_SIZE, 140))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(distancePointsTF, 0, GroupLayout.DEFAULT_SIZE, 40)))
+					.addGroup(layout.createParallelGroup(LEADING)
+							.addComponent(removeNeighborNoiseJC))
+					.addGroup(layout.createParallelGroup(LEADING)
+							.addComponent(sep2))
+					.addGroup(layout.createParallelGroup(LEADING)
+							.addComponent(meanMedianFilterLabel))
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(numWindowPointsLabel, 0, GroupLayout.DEFAULT_SIZE, 140))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(numWindowPointsTF, 0, GroupLayout.DEFAULT_SIZE, 40))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(meanFilterRB)))
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(pastPointsJC))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(t2, 0, GroupLayout.DEFAULT_SIZE, 65))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(medianFilterRB)))
+					.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(t3, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addGroup(layout.createParallelGroup(LEADING)
+								.addComponent(processButton)))
+					));
 
-		);
-
-		layout.setVerticalGroup(layout
-				.createSequentialGroup()
+		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(tableLabel)
 						.addComponent(tableTF)
@@ -175,46 +200,42 @@ public class RemoveNoisePanel extends AbstractPanel{
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(table))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addGroup(layout.createParallelGroup()
-								.addComponent(speedLabel)
-								.addComponent(speedTF)
-								.addComponent(fromFirst)	
-						)
-				)
+						.addComponent(bySpeedLabel))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(fromSecondLookingBackward)
-			
-				)
+						.addComponent(speedLabel)
+						.addComponent(speedTF)
+						.addComponent(fromFirst))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(sep1)
-						.addComponent(sep2)
-						.addComponent(sep3))
+							.addComponent(t1)
+							.addComponent(fromSecondLookingBackward))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(dbscanLabel))
+							.addComponent(sep1))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(minPointsLabel)
-						.addComponent(minPointsTF)
-						.addComponent(dbscanRB))
+							.addComponent(dbscanLabel))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(distancePointsLabel)
-						.addComponent(distancePointsTF))
+							.addComponent(minPointsLabel)
+							.addComponent(minPointsTF)
+							.addComponent(dbscanRB))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(removeNeighborNoiseJC))
+							.addComponent(distancePointsLabel)
+							.addComponent(distancePointsTF))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(sep4)
-						.addComponent(sep5)
-						.addComponent(sep6))
+							.addComponent(removeNeighborNoiseJC))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(meanMedianFilterLabel))
+							.addComponent(sep2))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(numWindowPointsLabel)
-						.addComponent(numWindowPointsTF)
-						.addComponent(meanFilterRB))
+							.addComponent(meanMedianFilterLabel))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(pastPointsJC)
-						.addComponent(medianFilterRB))
+							.addComponent(numWindowPointsLabel)
+							.addComponent(numWindowPointsTF)
+							.addComponent(meanFilterRB))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(processButton))
+							.addComponent(pastPointsJC)
+							.addComponent(t2)
+							.addComponent(medianFilterRB))
+				.addGroup(layout.createParallelGroup(BASELINE)
+							.addComponent(t3)
+							.addComponent(processButton))
 		);
 		
 	}

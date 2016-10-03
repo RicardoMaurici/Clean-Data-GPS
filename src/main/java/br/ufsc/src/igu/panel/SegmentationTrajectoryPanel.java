@@ -30,19 +30,19 @@ import br.ufsc.src.persistencia.exception.AddColumnException;
 import br.ufsc.src.persistencia.exception.DBConnectionException;
 import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 
-public class BrokeTrajectoryPanel extends AbstractPanel{
+public class SegmentationTrajectoryPanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel tableLabel, sampleTimeLabel, speedLabel, accuracyLabel, distanceLabel;
+	private JLabel tableLabel, sampleTimeLabel, speedLabel, accuracyLabel, distanceLabel,t1,t2;
 	private JTextField tableTF, sampleTimeTF, speedTF, accuracyTF, distanceTF;
 	private JButton tableBtn;
 	private JTable table1;
 	private JScrollPane table;
 	private JCheckBox booleanStatusCB;
 
-	public BrokeTrajectoryPanel(ServiceControl controle) {
+	public SegmentationTrajectoryPanel(ServiceControl controle) {
 		
-		super("Data Clean - Broke Trajectory", controle, new JButton("Start"));
+		super("Data Clean - Segmentation Trajectory", controle, new JButton("Start"));
 		defineComponents();
 		adjustComponents();
 	}
@@ -57,22 +57,22 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 		tableBtn = new JButton("Find");
 		tableBtn.addActionListener(this);
 		
-		sampleTimeLabel = new JLabel("Sample interval");
+		sampleTimeLabel = new JLabel("  Sample interval");
 		sampleTimeTF = new JTextField();
 		sampleTimeTF.setToolTipText("Set sample time interval in seconds");
 		
-		booleanStatusCB = new JCheckBox("Broke by status boolean");
+		booleanStatusCB = new JCheckBox("Segment by status");
 		
-		accuracyLabel = new JLabel("Accuracy");
+		accuracyLabel = new JLabel("Delete Accuracy ");
 		accuracyTF = new JTextField();
 		speedLabel = new JLabel("Delete speed up");
 		speedTF = new JTextField();
-		
-		distanceLabel = new JLabel("Max Distance");
+		 
+		distanceLabel = new JLabel("    Max Distance ");
 		distanceTF = new  JTextField();
 		distanceTF.setToolTipText("Set, in meters, max distance between two points");
 		
-		Object [] columnNames = new Object[]{ "Column", "Kind" };
+		Object [] columnNames = new Object[]{ "Column", "Type description" };
         Object [][] data        = new Object[][]{};
         
         DefaultTableModel tab = new MyTableModel( data,columnNames, true );
@@ -80,6 +80,8 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
         table = new JScrollPane(table1);
         table1.setRowHeight( 25 );
         setUpColumnComboBox(table1, table1.getColumnModel().getColumn(1));
+        t1 = new JLabel("");
+        t2 = new JLabel("");
         
 	}
 	
@@ -105,16 +107,18 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 						.addComponent(table)
 						.addGroup(layout.createSequentialGroup()
 								.addComponent(accuracyLabel)
-								.addComponent(accuracyTF)
+								.addComponent(accuracyTF, 0, GroupLayout.DEFAULT_SIZE, 50)
 								.addComponent(distanceLabel)
-								.addComponent(distanceTF)
+								.addComponent(distanceTF, 0, GroupLayout.DEFAULT_SIZE, 50)
+								.addComponent(t2, 0, GroupLayout.DEFAULT_SIZE, 20)
 								.addComponent(booleanStatusCB)
 						)
 						.addGroup(layout.createSequentialGroup()
 								.addComponent(speedLabel)
-								.addComponent(speedTF)
+								.addComponent(speedTF, 0, GroupLayout.DEFAULT_SIZE, 50)
 								.addComponent(sampleTimeLabel)
-								.addComponent(sampleTimeTF)
+								.addComponent(sampleTimeTF, 0, GroupLayout.DEFAULT_SIZE, 50)
+								.addComponent(t1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(processButton)
 						)	
 			)
@@ -134,6 +138,7 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 						.addComponent(accuracyTF)
 						.addComponent(distanceLabel)
 						.addComponent(distanceTF)
+						.addComponent(t2)
 						.addComponent(booleanStatusCB)
 				)
 				.addGroup(layout.createParallelGroup(BASELINE)
@@ -141,6 +146,7 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 						.addComponent(speedTF)
 						.addComponent(sampleTimeLabel)
 						.addComponent(sampleTimeTF)
+						.addComponent(t1)
 						.addComponent(processButton)
 				)
 		);
@@ -168,14 +174,14 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 				return;
 			}
 		}else if(e.getSource() == processButton){
-			ConfigTraj configTrajBroke = getDataFromWindow();
-			if(configTrajBroke != null){
+			ConfigTraj configTrajSeg = getDataFromWindow();
+			if(configTrajSeg != null){
 				try {
 					long startTime = System.currentTimeMillis();
-					control.brokeTraj(configTrajBroke);   
+					control.brokeTraj(configTrajSeg);   
 					long endTime   = System.currentTimeMillis();
 					long totalTime = endTime - startTime;
-					JOptionPane.showMessageDialog(null, "Broken Trajectories \n"+Utils.getDurationBreakdown(totalTime),
+					JOptionPane.showMessageDialog(null, "Segmentation Trajectories \n"+Utils.getDurationBreakdown(totalTime),
 							"Data Clean",
 							JOptionPane.INFORMATION_MESSAGE);
 				} catch (DBConnectionException e1) {
@@ -188,7 +194,7 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 					JOptionPane.showMessageDialog(null, "DB error: "+e1.getMessage(),
 							"Data Clean", JOptionPane.ERROR_MESSAGE);
 				} catch (BrokeTrajectoryException e1) {
-					JOptionPane.showMessageDialog(null, "Error breaking trajectories: "+e1.getMsg(),
+					JOptionPane.showMessageDialog(null, "Error segmenting trajectories: "+e1.getMsg(),
 							"Data Clean", JOptionPane.ERROR_MESSAGE);
 				}
 				clearWindow();
@@ -210,7 +216,7 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 			return null;
 	 	}
 		if(Utils.isStringEmpty(sampleTimeTF.getText()) && !booleanStatusCB.isSelected() && Utils.isStringEmpty(distanceTF.getText())){
-			JOptionPane.showMessageDialog(null,"You should choice a method to broke trajectories, \n by sample interval, max distance or status boolean","Data Clean", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,"You should choice a method to segment trajectories, \n by sample interval, max distance or status boolean","Data Clean", JOptionPane.ERROR_MESSAGE);
 			sampleTimeTF.requestFocus(true);
 			return null;
 		}
@@ -253,12 +259,12 @@ public class BrokeTrajectoryPanel extends AbstractPanel{
 			distance = 0;
 		}
 		
-		ConfigTraj configTrajBroke = new ConfigTraj(tableData, tableName, sample, distance, status);
-		configTrajBroke.setAccuracy(accuracy);
-		configTrajBroke.setSample(sample);
-		configTrajBroke.setSpeed(speed);
+		ConfigTraj configTrajSegm = new ConfigTraj(tableData, tableName, sample, distance, status);
+		configTrajSegm.setAccuracy(accuracy);
+		configTrajSegm.setSample(sample);
+		configTrajSegm.setSpeed(speed);
 		
-		return configTrajBroke;
+		return configTrajSegm;
 	}
 	 
 	private Object[][] getTableData () {
