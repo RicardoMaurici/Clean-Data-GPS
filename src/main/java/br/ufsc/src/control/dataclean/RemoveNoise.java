@@ -125,10 +125,10 @@ public class RemoveNoise {
         				numNoises++;
         		}
         	}
-        	if(neighborAndNoise && nearPoints == 0){
+        	if(!neighborAndNoise && nearPoints == 0){
         		gidsToRemove.add(p.getGid());
         		traj.getPoints().remove(i);
-        	}else if(!neighborAndNoise && nearPoints < minPoints){
+        	}else if(neighborAndNoise && nearPoints < minPoints){
         		gidsToRemove.add(p.getGid());
         		traj.getPoints().remove(i);
         	}else

@@ -397,10 +397,12 @@ public class Persistencia implements InterfacePersistencia {
 	}
 
 	public void deleteByGids(List<Integer> gids, String tableNameOrigin) throws DBConnectionException, SQLException {
+		if(gids.size() == 0)
+			return;
 		String ids ="";
-		for (Integer gid : gids) {
+		for (Integer gid : gids) 
 			ids += gid+",";
-		}
+
 		ids = ids.substring(0, ids.length()-1);
 		abraConexao();
 		DB_CONN.execute("DELETE FROM "+tableNameOrigin+" WHERE gid in ("+ ids +");");
