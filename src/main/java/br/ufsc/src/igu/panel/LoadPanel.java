@@ -71,19 +71,19 @@ public class LoadPanel extends AbstractPanel {
 	private JCheckBox addMetadata, igExt, tid, gid;
 	
 	public LoadPanel(ServiceControl controle) {
-		super("Load JSON/GPX/KML/WKT files", controle, new JButton("Load"));
+		super("Load JSON/GPX/KML/WKT files", controle, new JButton("Load data"));
 		defineComponents();
 		adjustComponents();
 	}
 
 	public void defineComponents() {
-		dirLabel = new JLabel("Directory/File");
-		sridLabel = new JLabel("Data SRID");
+		dirLabel = new JLabel("Source (dir/file)");
+		sridLabel = new JLabel("Current SRID");
 		sridNewLabel = new JLabel("  New SRID");
 		tableLabel = new JLabel("Table name");
 		igFileLabel = new JLabel("Ignore files");
 		extLabel = new JLabel("Extensions");
-		igDirLabel = new JLabel("Ign. folders");
+		igDirLabel = new JLabel("Ignore folders");
 		dirTf = new JTextField();
 		tableDBTf = new JTextField();
 		sridTf = new JTextField();
@@ -94,10 +94,10 @@ public class LoadPanel extends AbstractPanel {
 		
 		dirBtn = new JButton("Select");
 
-		addMetadata = new JCheckBox("Add Metadata");
+		addMetadata = new JCheckBox("Save Metadata");
 		igExt = new JCheckBox("Ignore extensions");
-		tid = new JCheckBox("Generate TID");
-		gid = new JCheckBox("Generate GID");
+		tid = new JCheckBox("Generate serial TID (per file)");
+		gid = new JCheckBox("Generate serial GID (per line)");
 		
 		extTf.setText("pdf,zip,txt,csv,tsv");
 		igExt.setSelected(true);
@@ -136,14 +136,14 @@ public class LoadPanel extends AbstractPanel {
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createSequentialGroup()
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(tableLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
+											.addComponent(tableLabel, 0, GroupLayout.DEFAULT_SIZE, 88))
 									.addGroup(layout.createParallelGroup(LEADING)
 											.addComponent(tableDBTf, 0, GroupLayout.DEFAULT_SIZE, 300)))
 						)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createSequentialGroup()
 									.addGroup(layout.createParallelGroup(LEADING)
-											.addComponent(sridLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
+											.addComponent(sridLabel, 0, GroupLayout.DEFAULT_SIZE, 88))
 									.addGroup(layout.createParallelGroup(LEADING)
 											.addComponent(sridTf, 0, GroupLayout.DEFAULT_SIZE, 70))
 									.addGroup(layout.createParallelGroup(LEADING)
@@ -153,7 +153,7 @@ public class LoadPanel extends AbstractPanel {
 						)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(igDirLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
+										.addComponent(igDirLabel, 0, GroupLayout.DEFAULT_SIZE, 88))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(igDirTf, 0, GroupLayout.DEFAULT_SIZE, 200))
 								.addGroup(layout.createParallelGroup(LEADING)
@@ -163,7 +163,7 @@ public class LoadPanel extends AbstractPanel {
 						)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(extLabel, 0, GroupLayout.DEFAULT_SIZE, 77))
+										.addComponent(extLabel, 0, GroupLayout.DEFAULT_SIZE, 88))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(extTf, 0, GroupLayout.DEFAULT_SIZE, 200))
 								.addGroup(layout.createParallelGroup(LEADING)
@@ -314,7 +314,7 @@ public class LoadPanel extends AbstractPanel {
 						control.loadData(tb, dir);   
 						long endTime   = System.currentTimeMillis();
 						long totalTime = endTime - startTime;
-						JOptionPane.showMessageDialog(null, "Data loadaded \n"+Utils.getDurationBreakdown(totalTime),
+						JOptionPane.showMessageDialog(null, "Data loaded \n"+Utils.getDurationBreakdown(totalTime),
 								"Loading data",
 								JOptionPane.INFORMATION_MESSAGE);
 						clearWindow();

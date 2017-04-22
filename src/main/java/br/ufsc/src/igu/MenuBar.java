@@ -15,8 +15,16 @@ public class MenuBar extends JMenuBar {
 	private void organizeMenu(MainWindow mainWindow) {
 		JMenu menu;
 		JMenuItem item;
+		
+		menu = new JMenu("Configuration");
+		add(menu);
 
-		menu = new JMenu("File");
+		item = new JMenuItem("Connection");
+		menu.add(item);
+		item.setActionCommand(EnumMenuOption.OPTIONCONECTION.name());
+		item.addActionListener(mainWindow);	
+
+		menu = new JMenu("Load/Export");
 		add(menu);
 		
 		item = new JMenuItem("Load DSV");
@@ -36,30 +44,23 @@ public class MenuBar extends JMenuBar {
 		item.setActionCommand(EnumMenuOption.OPTIONEXPORTCSV.name());
 		item.addActionListener(mainWindow);
 		
-		menu = new JMenu("Data Clean");
+		menu = new JMenu("Preprocessing");
 		add(menu);
 		
-		item = new JMenuItem("Broke Trajectories");
+		item = new JMenuItem("Trajectory Segmentation");
 		menu.add(item);
 		item.setActionCommand(EnumMenuOption.OPTIONDBROKETRAJECTORY.name());
 		item.addActionListener(mainWindow);
 		
-		item = new JMenuItem("Traj Near Point");
-		menu.add(item);
-		item.setActionCommand(EnumMenuOption.OPTIONTRAJNEARPOINT.name());
-		item.addActionListener(mainWindow);
-		
-		item = new JMenuItem("Remove Noise");
+		item = new JMenuItem("Noise Removal");
 		menu.add(item);
 		item.setActionCommand(EnumMenuOption.OPTIONREMOVENOISE.name());
 		item.addActionListener(mainWindow);
 		
-		menu = new JMenu("Configuration");
-		add(menu);
-
-		item = new JMenuItem("Connection");
+		item = new JMenuItem("Find Trajectory Near Location");
 		menu.add(item);
-		item.setActionCommand(EnumMenuOption.OPTIONCONECTION.name());
-		item.addActionListener(mainWindow);		
+		item.setActionCommand(EnumMenuOption.OPTIONTRAJNEARPOINT.name());
+		item.addActionListener(mainWindow);
+		
 	}
 }

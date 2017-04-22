@@ -26,7 +26,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	ServiceControl control;
 
 	public MainWindow(ServiceControl control) {
-		super("Clean Data GPS");
+		super("Trajectory Preprocessing Tool");
 		this.control = control;
 		configure();
 	}

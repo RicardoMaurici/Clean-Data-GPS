@@ -35,7 +35,7 @@ import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 public class TrajNearPointPanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel tableLabel, latitudeLabel, distanceLabel, longitudeLabel;
+	private JLabel tableLabel, latitudeLabel, distanceLabel, longitudeLabel, t1;
 	private JTextField tableTF, latitudeTF, distanceTF, longitudeTF;
 	private JButton tableBtn;
 	private JTable table1;
@@ -43,7 +43,7 @@ public class TrajNearPointPanel extends AbstractPanel{
 
 	public TrajNearPointPanel(ServiceControl controle) {
 		
-		super("Data Clean - Trajectories Near a Point", controle, new JButton("Start"));
+		super("Find Trajectory Near Location", controle, new JButton("Create table with found trajectories"));
 		defineComponents();
 		adjustComponents();
 	}
@@ -53,7 +53,7 @@ public class TrajNearPointPanel extends AbstractPanel{
 		
 		processButton.setBackground(Color.DARK_GRAY);
 		
-		tableLabel = new JLabel("Table name");
+		tableLabel = new JLabel("Source table name");
 		tableTF = new JTextField();
 		tableBtn = new JButton("Find");
 		tableBtn.addActionListener(this);
@@ -66,11 +66,11 @@ public class TrajNearPointPanel extends AbstractPanel{
 		longitudeTF = new JTextField();
 		longitudeTF.setToolTipText("Set longitude in ref 4326");
 		
-		distanceLabel = new JLabel("Distance in meters");
+		distanceLabel = new JLabel("Distance up to");
 		distanceTF = new JTextField();
 		distanceTF.setToolTipText("Set distance in meters to the buffer around the point");
 		
-		Object [] columnNames = new Object[]{ "Column", "Type description" };
+		Object [] columnNames = new Object[]{ "Column name", "Column description" };
         Object [][] data        = new Object[][]{};
         
         DefaultTableModel tab = new MyTableModel( data,columnNames, true );
@@ -78,6 +78,7 @@ public class TrajNearPointPanel extends AbstractPanel{
         table = new JScrollPane(table1);
         table1.setRowHeight( 25 );
         setUpColumnComboBox(table1, table1.getColumnModel().getColumn(1));
+        t1 = new JLabel("");
         
 	}
 	
@@ -113,10 +114,13 @@ public class TrajNearPointPanel extends AbstractPanel{
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(distanceLabel))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(distanceTF))
+										.addComponent(distanceTF)))	
+						.addGroup(layout.createSequentialGroup()
+								.addGroup(layout.createParallelGroup(LEADING)
+										.addComponent(t1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(processButton))	
-						)		
+						)
 				)
 		);
 
@@ -135,6 +139,11 @@ public class TrajNearPointPanel extends AbstractPanel{
 								.addComponent(latitudeTF)
 								.addComponent(distanceLabel)
 								.addComponent(distanceTF)
+						)
+				)
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addGroup(layout.createParallelGroup(Alignment.CENTER)
+								.addComponent(t1)
 								.addComponent(processButton)
 						)
 				)	

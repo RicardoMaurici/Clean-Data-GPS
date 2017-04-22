@@ -140,6 +140,8 @@ public class ServiceControl {
 	public void removeNoise(ConfigTraj configTraj) throws AddBatchException, ExecuteBatchException, DBConnectionException, SQLException {
 		Set<Integer> tids = null;
 		configTraj.setTableNameOrigin(createTableNoise(configTraj));
+		persistencia.createIndex(configTraj.getTableNameOrigin(), configTraj.getColumnName("gid"), "btree");
+		persistencia.createIndex(configTraj.getTableNameOrigin(), configTraj.getColumnName("tid"), "btree");
 		RemoveNoise removeNoise = new RemoveNoise(persistencia, configTraj);
 		try {
 			tids = persistencia.fetchTIDS(configTraj.getColumnName("TID"), configTraj.getTableNameOrigin());
@@ -149,6 +151,8 @@ public class ServiceControl {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		persistencia.dropIndex(configTraj.getTableNameOrigin(), configTraj.getColumnName("gid"));
+		persistencia.dropIndex(configTraj.getTableNameOrigin(), configTraj.getColumnName("tid"));
 	}
 	
 	private String createTableNoise(ConfigTraj configTraj) throws DBConnectionException, SQLException{

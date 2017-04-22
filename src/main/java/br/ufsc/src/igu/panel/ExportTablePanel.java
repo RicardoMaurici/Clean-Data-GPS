@@ -44,17 +44,17 @@ public class ExportTablePanel extends AbstractPanel{
 			
 			processButton.setBackground(Color.DARK_GRAY);
 			
-			dirLabel = new JLabel("  Directory  ");
+			dirLabel = new JLabel("Export to");
 			dirTf = new JTextField();
 			dirBtn = new JButton("Select");
 			dirBtn.addActionListener(this);
 			
-			tableLabel = new JLabel("Table name");
+			tableLabel = new JLabel("Source table");
 			tableTF = new JTextField();
-			tableBtn = new JButton(" Find ");
+			tableBtn = new JButton("Find");
 			tableBtn.addActionListener(this);
 			
-			Object [] columnNames = new Object[]{ "Column"};
+			Object [] columnNames = new Object[]{ "Column name"};
 	        Object [][] data        = new Object[][]{};
 	        
 	        DefaultTableModel tab = new MyTableModel( data,columnNames, true );
@@ -79,7 +79,7 @@ public class ExportTablePanel extends AbstractPanel{
 					.addGroup(layout.createParallelGroup(LEADING)
 							.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(dirLabel))
+										.addComponent(dirLabel, 0, GroupLayout.DEFAULT_SIZE, 72))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(dirTf))
 								.addGroup(layout.createParallelGroup(LEADING)
@@ -91,7 +91,7 @@ public class ExportTablePanel extends AbstractPanel{
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(tableTF))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(tableBtn))
+										.addComponent(tableBtn, 0, GroupLayout.DEFAULT_SIZE, 62))
 						)
 						.addComponent(table)
 						.addGroup(layout.createSequentialGroup()

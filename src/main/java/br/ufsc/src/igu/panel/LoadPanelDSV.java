@@ -77,19 +77,19 @@ public class LoadPanelDSV extends AbstractPanel {
 	private JComboBox typesCb;
 	
 	public LoadPanelDSV(ServiceControl controle) {
-		super("Load DSV files", controle, new JButton("Load"));
+		super("Load DSV files", controle, new JButton("Load data"));
 		defineComponents();
 		adjustComponents();
 	}
 
 	public void defineComponents() {
-		directoryLabel = new JLabel("Directory/File");
-		igLineLabel = new JLabel("Lines to ignore");
+		directoryLabel = new JLabel("Source (dir/file)");
+		igLineLabel = new JLabel("Start after line");
 		delimiterLabel = new JLabel("Delimiter");
-		formatDateLabel = new JLabel("Format date");
-		formatTimeLabel = new JLabel("Format time");
-		sridCurrentLabel = new JLabel("SRID current");
-		sridNewLabel = new JLabel("SRID new");
+		formatDateLabel = new JLabel("Date format");
+		formatTimeLabel = new JLabel("Time format");
+		sridCurrentLabel = new JLabel("Current SRID");
+		sridNewLabel = new JLabel("New SRID");
 		tableNameLabel = new JLabel("Table name");
 		igFilesLabel = new JLabel("Ignore files");
 		extLabel = new JLabel("Extensions");
@@ -122,7 +122,7 @@ public class LoadPanelDSV extends AbstractPanel {
 		t8 = new JLabel("");
 		
 		directoryBtn = new JButton("Select");
-		addColumnBtn = new JButton("Add line");
+		addColumnBtn = new JButton("Add column");
 
 		PromptSupport.setPrompt("Column name", newColumnTf);
 		PromptSupport.setPrompt("Pos. in file", positionTf);
@@ -133,14 +133,14 @@ public class LoadPanelDSV extends AbstractPanel {
 		typesCb.setRenderer(new MyComboBoxRenderer("TYPE"));
 		typesCb.setSelectedIndex(-1);
 		((JLabel)typesCb.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-		addMetadata = new JCheckBox("Add Metadata");
+		addMetadata = new JCheckBox("Save Metadata");
 		igExt = new JCheckBox("Ignore");
-		tid = new JCheckBox("Generate TID");
-		gid = new JCheckBox("Generate GID");
+		tid = new JCheckBox("Generate serial TID (per file)");
+		gid = new JCheckBox("Generate serial GID (per line)");
 		
 		
 		
-		Object [] columnNames = new Object[]{ "Column", "Pos. in file", "Type", "Size" };
+		Object [] columnNames = new Object[]{ "Column name", "Position in file", "Type", "Size" };
         Object [][] data        = new Object[][]{ {"date",     "", EnumTypes.CHARACTERVARYING.toString(),""} //TODO testes
         											, {"time", "", EnumTypes.CHARACTERVARYING.toString(),""}
         											, {"lat",  "", EnumTypes.NUMERIC.toString(),""}
@@ -168,12 +168,8 @@ public class LoadPanelDSV extends AbstractPanel {
 				.setToolTipText("Click to select directory/file");
 		processButton.setToolTipText("Click to load");
 		
-		igLineTf.setText("1");
+		igLineTf.setText("0");
 		delimiterTf.setText(",");
-		directoryTf.setText("/Users/rogerjames/Desktop/trucks_rev_pos_teste.txt");
-		sridCurrentlTf.setText("2100");
-		sridNewTf.setText("900913");
-		formatDateTf.setText("yyyy-MM-dd HH:mm:ss");
 	}
 
 	public void adjustComponents() {
@@ -197,9 +193,9 @@ public class LoadPanelDSV extends AbstractPanel {
 								.addGroup(layout.createParallelGroup(LEADING)
 									.addComponent(formatDateTf, 0, GroupLayout.DEFAULT_SIZE, 170))
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(t2, 0, GroupLayout.DEFAULT_SIZE, 25))
+										.addComponent(t2, 0, GroupLayout.DEFAULT_SIZE, 20))
 								.addGroup(layout.createParallelGroup(LEADING)
-									.addComponent(formatTimeLabel, 0, GroupLayout.DEFAULT_SIZE, 70))
+									.addComponent(formatTimeLabel, 0, GroupLayout.DEFAULT_SIZE, 73))
 								.addGroup(layout.createParallelGroup(LEADING)
 									.addComponent(formatTimeTf, 0, GroupLayout.DEFAULT_SIZE, 80))
 								.addGroup(layout.createParallelGroup(LEADING)
@@ -474,7 +470,7 @@ public class LoadPanelDSV extends AbstractPanel {
 						control.loadData(tb, dir);   
 						long endTime   = System.currentTimeMillis();
 						long totalTime = endTime - startTime;
-						JOptionPane.showMessageDialog(null, "Data loadaded \n"+Utils.getDurationBreakdown(totalTime),
+						JOptionPane.showMessageDialog(null, "Data loaded \n"+Utils.getDurationBreakdown(totalTime),
 								"Loading data",
 								JOptionPane.INFORMATION_MESSAGE);
 						clearWindow();

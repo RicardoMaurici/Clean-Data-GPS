@@ -27,7 +27,7 @@ public class ConnectionPanel extends AbstractPanel {
 	private JButton testeBtn;
 
 	public ConnectionPanel(ServiceControl controle) {
-		super("Connection to DB", controle, new JButton("Connect"));
+		super("Database Connection", controle, new JButton("Connect"));
 		defineComponents();
 		adjustComponents();
 	}
@@ -45,31 +45,31 @@ public class ConnectionPanel extends AbstractPanel {
 				.addGroup(layout.createParallelGroup(LEADING)
 						.addGroup(layout.createSequentialGroup()
 							.addGroup(layout.createParallelGroup(LEADING)
-									.addComponent(driverLabel))
+									.addComponent(driverLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
 							.addGroup(layout.createParallelGroup(LEADING)
 									.addComponent(driverTf))
 						)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(urlLabel))
+										.addComponent(urlLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(urlTf))
 							)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(usuarioLabel))
+										.addComponent(usuarioLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(userTf))
 							)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(senhaLabel))
+										.addComponent(senhaLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(passwordTf))
 							)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(bancoLabel))
+										.addComponent(bancoLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(bancoTf))
 							)
@@ -113,10 +113,10 @@ public class ConnectionPanel extends AbstractPanel {
 		processButton.setBackground(Color.DARK_GRAY);
 		t1 =  new JLabel("");
 		driverLabel = new JLabel("Driver Postgres");
-		urlLabel 	= new JLabel("URL                ");
-		senhaLabel 	= new JLabel("Password        ");
-		usuarioLabel =new JLabel("User               ");
-		bancoLabel = new  JLabel("Database        ");
+		urlLabel 	= new JLabel("Server");
+		senhaLabel 	= new JLabel("Password");
+		usuarioLabel =new JLabel("User");
+		bancoLabel = new  JLabel("Database");
 		driverTf = new JTextField();
 		urlTf = new JTextField();
 		passwordTf  = new JTextField();

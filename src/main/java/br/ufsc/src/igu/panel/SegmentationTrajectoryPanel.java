@@ -33,7 +33,7 @@ import br.ufsc.src.persistencia.exception.GetTableColumnsException;
 public class SegmentationTrajectoryPanel extends AbstractPanel{
 	
 	private static final long serialVersionUID = 1L;
-	private JLabel tableLabel, sampleTimeLabel, speedLabel, accuracyLabel, distanceLabel,t1,t2;
+	private JLabel tableLabel, sampleTimeLabel, speedLabel, accuracyLabel, distanceLabel,t1,bystatus;
 	private JTextField tableTF, sampleTimeTF, speedTF, accuracyTF, distanceTF;
 	private JButton tableBtn;
 	private JTable table1;
@@ -42,7 +42,7 @@ public class SegmentationTrajectoryPanel extends AbstractPanel{
 
 	public SegmentationTrajectoryPanel(ServiceControl controle) {
 		
-		super("Data Clean - Segmentation Trajectory", controle, new JButton("Start"));
+		super("Segmentation Trajectory", controle, new JButton("Start segmentation"));
 		defineComponents();
 		adjustComponents();
 	}
@@ -52,27 +52,28 @@ public class SegmentationTrajectoryPanel extends AbstractPanel{
 		
 		processButton.setBackground(Color.DARK_GRAY);
 		
-		tableLabel = new JLabel("Table name");
+		tableLabel = new JLabel("Source table name");
 		tableTF = new JTextField();
 		tableBtn = new JButton("Find");
 		tableBtn.addActionListener(this);
 		
-		sampleTimeLabel = new JLabel("  Sample interval");
+		sampleTimeLabel = new JLabel("Maximum sampling time gap");
 		sampleTimeTF = new JTextField();
 		sampleTimeTF.setToolTipText("Set sample time interval in seconds");
 		
-		booleanStatusCB = new JCheckBox("Segment by status");
+		booleanStatusCB = new JCheckBox();
+		bystatus = new JLabel("Segment by status change");
 		
 		accuracyLabel = new JLabel("Delete Accuracy ");
 		accuracyTF = new JTextField();
 		speedLabel = new JLabel("Delete speed up");
 		speedTF = new JTextField();
 		 
-		distanceLabel = new JLabel("    Max Distance ");
+		distanceLabel = new JLabel("Maximum distance gap");
 		distanceTF = new  JTextField();
 		distanceTF.setToolTipText("Set, in meters, max distance between two points");
 		
-		Object [] columnNames = new Object[]{ "Column", "Type description" };
+		Object [] columnNames = new Object[]{ "Column name", "Column description" };
         Object [][] data        = new Object[][]{};
         
         DefaultTableModel tab = new MyTableModel( data,columnNames, true );
@@ -81,7 +82,6 @@ public class SegmentationTrajectoryPanel extends AbstractPanel{
         table1.setRowHeight( 25 );
         setUpColumnComboBox(table1, table1.getColumnModel().getColumn(1));
         t1 = new JLabel("");
-        t2 = new JLabel("");
         
 	}
 	
@@ -106,18 +106,18 @@ public class SegmentationTrajectoryPanel extends AbstractPanel{
 						)
 						.addComponent(table)
 						.addGroup(layout.createSequentialGroup()
-								.addComponent(accuracyLabel)
-								.addComponent(accuracyTF, 0, GroupLayout.DEFAULT_SIZE, 50)
-								.addComponent(distanceLabel)
-								.addComponent(distanceTF, 0, GroupLayout.DEFAULT_SIZE, 50)
-								.addComponent(t2, 0, GroupLayout.DEFAULT_SIZE, 20)
+								.addComponent(bystatus, 0, GroupLayout.DEFAULT_SIZE, 167)
 								.addComponent(booleanStatusCB)
 						)
 						.addGroup(layout.createSequentialGroup()
-								.addComponent(speedLabel)
-								.addComponent(speedTF, 0, GroupLayout.DEFAULT_SIZE, 50)
 								.addComponent(sampleTimeLabel)
 								.addComponent(sampleTimeTF, 0, GroupLayout.DEFAULT_SIZE, 50)
+						)
+						.addGroup(layout.createSequentialGroup()
+								.addComponent(distanceLabel, 0, GroupLayout.DEFAULT_SIZE, 167)
+								.addComponent(distanceTF, 0, GroupLayout.DEFAULT_SIZE, 50)
+						)
+						.addGroup(layout.createSequentialGroup()
 								.addComponent(t1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(processButton)
 						)	
@@ -134,18 +134,18 @@ public class SegmentationTrajectoryPanel extends AbstractPanel{
 				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(table))
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(accuracyLabel)
-						.addComponent(accuracyTF)
-						.addComponent(distanceLabel)
-						.addComponent(distanceTF)
-						.addComponent(t2)
+						.addComponent(bystatus)
 						.addComponent(booleanStatusCB)
 				)
 				.addGroup(layout.createParallelGroup(BASELINE)
-						.addComponent(speedLabel)
-						.addComponent(speedTF)
 						.addComponent(sampleTimeLabel)
 						.addComponent(sampleTimeTF)
+				)
+				.addGroup(layout.createParallelGroup(BASELINE)
+						.addComponent(distanceLabel)
+						.addComponent(distanceTF)
+				)
+				.addGroup(layout.createParallelGroup(BASELINE)
 						.addComponent(t1)
 						.addComponent(processButton)
 				)
