@@ -22,8 +22,8 @@ import br.ufsc.src.control.ServiceControl;
 public class ConnectionPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField driverTf, urlTf, passwordTf, userTf, bancoTf;
-	private JLabel driverLabel, urlLabel, senhaLabel, usuarioLabel, bancoLabel,t1;
+	private JTextField passwordTf, userTf, bancoTf;
+	private JLabel senhaLabel, usuarioLabel, bancoLabel,t1;
 	private JButton testeBtn;
 
 	public ConnectionPanel(ServiceControl controle) {
@@ -43,18 +43,6 @@ public class ConnectionPanel extends AbstractPanel {
 				.createSequentialGroup()
 				
 				.addGroup(layout.createParallelGroup(LEADING)
-						.addGroup(layout.createSequentialGroup()
-							.addGroup(layout.createParallelGroup(LEADING)
-									.addComponent(driverLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
-							.addGroup(layout.createParallelGroup(LEADING)
-									.addComponent(driverTf))
-						)
-						.addGroup(layout.createSequentialGroup()
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(urlLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
-								.addGroup(layout.createParallelGroup(LEADING)
-										.addComponent(urlTf))
-							)
 						.addGroup(layout.createSequentialGroup()
 								.addGroup(layout.createParallelGroup(LEADING)
 										.addComponent(usuarioLabel, 0, GroupLayout.DEFAULT_SIZE, 90))
@@ -86,12 +74,6 @@ public class ConnectionPanel extends AbstractPanel {
 		layout.setVerticalGroup(layout
 				.createSequentialGroup()
 						.addGroup(layout.createParallelGroup(BASELINE)
-								.addComponent(driverLabel)
-								.addComponent(driverTf))
-						.addGroup(layout.createParallelGroup(BASELINE)
-								.addComponent(urlLabel)
-								.addComponent(urlTf))
-						.addGroup(layout.createParallelGroup(BASELINE)
 								.addComponent(usuarioLabel)
 								.addComponent(userTf))
 						.addGroup(layout.createParallelGroup(BASELINE)
@@ -104,7 +86,6 @@ public class ConnectionPanel extends AbstractPanel {
 								.addComponent(t1)
 								.addComponent(testeBtn)
 								.addComponent(processButton))
-						
 			);
 	}
 
@@ -112,20 +93,14 @@ public class ConnectionPanel extends AbstractPanel {
 	public void defineComponents() {
 		processButton.setBackground(Color.DARK_GRAY);
 		t1 =  new JLabel("");
-		driverLabel = new JLabel("Driver Postgres");
-		urlLabel 	= new JLabel("Server");
 		senhaLabel 	= new JLabel("Password");
 		usuarioLabel =new JLabel("User");
 		bancoLabel = new  JLabel("Database");
-		driverTf = new JTextField();
-		urlTf = new JTextField();
 		passwordTf  = new JTextField();
 		userTf = new JTextField();
 		bancoTf = new JTextField();
 		testeBtn = new JButton("Test connection");
 		testeBtn.addActionListener(this);
-		driverTf.setText("org.postgresql.Driver");
-		urlTf.setText("jdbc:postgresql://localhost/");
 
 		bancoTf.setToolTipText("Defina o nome do album");
 		processButton.setToolTipText("Clique para processar");
@@ -134,8 +109,8 @@ public class ConnectionPanel extends AbstractPanel {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String drive = driverTf.getText();
-		String url = urlTf.getText();
+		String drive = "org.postgresql.Driver";
+		String url = "jdbc:postgresql://localhost/";
 		String usuario = userTf.getText();
 		String senha = passwordTf.getText();
 		String banco = bancoTf.getText();
