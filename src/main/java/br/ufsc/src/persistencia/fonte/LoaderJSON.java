@@ -23,7 +23,6 @@ import br.ufsc.src.persistencia.exception.GetSequenceException;
 public class LoaderJSON implements ILoader {
 
 	public void loadFile(File file, TrajetoriaBruta tb, int folder_id) throws FileNFoundException, DBConnectionException, CreateStatementException, GetSequenceException, AddBatchException, ExecuteBatchException {
-		
 		DBConnectionProvider DB_CONN = DBConnectionProvider.getInstance();
 		Persistencia.abraConexao();
 		try {
@@ -32,6 +31,7 @@ public class LoaderJSON implements ILoader {
 			throw new CreateStatementException(e1.getMessage());
 		}
 		int seq = 0;
+		int cont = 0;
 		if (tb.isTID())
 			seq = Persistencia.getSequence(tb.getTabelaBanco(), "tid");
 		else
@@ -66,8 +66,17 @@ public class LoaderJSON implements ILoader {
 				sql += sql1 +");";
 				try {
 					DB_CONN.addBatch(sql);
+					cont++;
 				} catch (SQLException e) {
 					throw new AddBatchException(e.getMessage());
+				}
+				if(cont == 200000){
+					try {
+						DB_CONN.executeBatch();
+					} catch (SQLException e) {
+						throw new ExecuteBatchException(e.getMessage());
+					}
+					cont = 0;
 				}
 				
 			}
